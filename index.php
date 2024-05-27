@@ -56,7 +56,7 @@ session_start();
               <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                 <li class="active"><a href="index.php"><span>Home</span></a></li>
                 <li class="has-children">
-                  <a href="about.html"><span>Recherche</span></a>
+                  <a href="#"><span>Recherche</span></a>
                   <ul class="dropdown arrow-top">
                     <li><a href="agent.php">Agent</a></li>
                     <li><a href="#">Immobilier Résidentiel</a></li>
@@ -64,8 +64,8 @@ session_start();
                     <li><a href="#">Appartement à Louer</a></li>
                   </ul>
                 </li>
-                <li><a href="listings.html"><span>Tout Parcourir</span></a></li>
-                <li><a href="about.html"><span>Rendez-Vous</span></a></li>
+                <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
+                <li><a href="#"><span>Rendez-Vous</span></a></li>
                 <?php
                   // Vérifiez si l'utilisateur est connecté
                   if(isset($_SESSION['email'])) {

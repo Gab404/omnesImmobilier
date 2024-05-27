@@ -15,8 +15,8 @@ if ($conn->connect_error) {
     die("Connexion échouée: " . $conn->connect_error);
 }
 
-// Requête SQL pour récupérer les données des agents
-$sql = "SELECT email, nom, prenom, photoPath FROM agent";
+// Requête SQL pour récupérer les données des biens immobiliers
+$sql = "SELECT photoPath, description, nbPiece, nbChambre, dimension, adresse, type, prix FROM immobilier ORDER BY RAND()";
 $result = $conn->query($sql);
 ?>
 
@@ -75,17 +75,19 @@ $result = $conn->query($sql);
         .card-title, .card-text{
             color: white;
         }
-        .btn-cv {
-            width: 40%;
-        }
         .hero-image {
             width: 100%;
             height: 500px;
             object-fit: cover;
         }
+        .card-img-top {
+        width: 100%;
+        height: 200px; /* Ajustez la hauteur selon vos besoins */
+        object-fit: cover;
+        }
     </style>
 
-    <title>Omnes Immobilier - Agents</title>
+    <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
 <body>
     <div class="site-mobile-menu">
@@ -107,16 +109,16 @@ $result = $conn->query($sql);
                     <nav class="site-navigation position-relative text-right" role="navigation">
                         <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                             <li><a href="index.php"><span>Home</span></a></li>
-                            <li class="has-children active">
+                            <li class="has-children">
                                 <a href="#"><span>Recherche</span></a>
                                 <ul class="dropdown arrow-top">
-                                    <li class="active"><a href="agent.php">Agent</a></li>
+                                    <li><a href="agent.php">Agent</a></li>
                                     <li><a href="#">Immobilier Résidentiel</a></li>
                                     <li><a href="#">Terrain</a></li>
                                     <li><a href="#">Appartement à Louer</a></li>
                                 </ul>
                             </li>
-                            <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
+                            <li class="active"><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
                             <li><a href="#"><span>Rendez-Vous</span></a></li>
                             <?php
                             if(isset($_SESSION['email'])) {
@@ -147,39 +149,40 @@ $result = $conn->query($sql);
     <?php endif; ?>
 
     <section id="accueil" class="mt-0">
-        <img src="assets/bgAgent.jpg" class="hero-image" alt="Hero Image">
+        <img src="assets/bgImmobilier.jpg" class="hero-image" alt="Hero Image">
     </section>
 
     <div class="container mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black; ">Nos Agents</h1>
+        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Biens Immobiliers</h1>
         <div class="container mt-3 text-center" style="width: 30%;">
-        <div class="row">
-            <div class="col-md-12">
-                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par nom">
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par adresse ou id">
+                </div>
             </div>
         </div>
-    </div>
         <div class="row" id="searchResult">
             <?php
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    echo '<div class="col-md-4">';
-                    echo '    <div class="card">';
-                    echo '        <img src="' . $row["photoPath"] . '" class="card-img-top" alt="Photo de ' . $row["prenom"] . ' ' . $row["nom"] . '">';
-                    echo '        <div class="card-body d-flex flex-column">';
-                    echo '            <div class="mt-auto text-center">';
-                    echo '              <h5 class="card-title">' . $row["prenom"] . ' ' . $row["nom"] . '</h5>';
-                    echo '              <p class="card-text">' . $row["email"] . '</p>';
-                    echo '              <a href="#" class="btn btn-primary btn-cv">CV</a>';
-                    echo '            </div>';
-                    echo '        </div>';
-                    echo '    </div>';
-                    echo '</div>';                    
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        echo '<div class="col-md-4">';
+                        echo '    <div class="card">';
+                        echo '        <img src="' . $row["photoPath"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
+                        echo '        <div class="card-body d-flex flex-column">';
+                        echo '            <div class="mt-auto text-center">';
+                        echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
+                        echo '              <p class="card-text">' . $row["adresse"] . '</p>';
+                        echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
+                        echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
+                        echo '            </div>';
+                        echo '        </div>';
+                        echo '    </div>';
+                        echo '</div>';                    
+                    }
+                } else {
+                    echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
                 }
-            } else {
-                echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
-            }
-            $conn->close();
+                $conn->close();
             ?>
         </div>
     </div>
@@ -230,22 +233,20 @@ $result = $conn->query($sql);
 <script>
     document.getElementById("searchInput").addEventListener("input", function() {
         var inputVal = this.value;
-        searchAgents(inputVal);
+        searchImmobiliers(inputVal);
     });
 
-    function searchAgents(inputVal) {
-    var searchQuery = inputVal;
-    fetch('searchAgent.php', {
+    function searchImmobiliers(inputVal) {
+    var searchInput = inputVal;
+    fetch('searchImmobilier.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'searchQuery=' + encodeURIComponent(searchQuery),
+        body: 'searchInput=' + encodeURIComponent(searchInput),
     })
     .then(response => response.text())
     .then(data => {
-        // console.log(data); // Afficher le contenu de la réponse dans la console
-        // Mettez ici le code pour afficher les résultats de la recherche dans votre page
         document.getElementById('searchResult').innerHTML = data;
     })
     .catch(error => {
