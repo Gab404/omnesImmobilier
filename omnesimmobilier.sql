@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 27 mai 2024 à 14:24
+-- Généré le : lun. 27 mai 2024 à 20:55
 -- Version du serveur : 8.2.0
 -- Version de PHP : 8.2.13
 
@@ -60,17 +60,20 @@ CREATE TABLE IF NOT EXISTS `client` (
   `nom` varchar(255) NOT NULL,
   `prenom` varchar(255) NOT NULL,
   `adresse` varchar(255) NOT NULL,
-  `tel` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `tel` varchar(255) NOT NULL,
+  `photo` longblob,
+  `id` int NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `client`
 --
 
-INSERT INTO `client` (`email`, `password`, `nom`, `prenom`, `adresse`, `tel`) VALUES
-('matteo.leon@edu.ece.fr', '123456789', 'leon', 'matteo', 'boulogne', '5678655789'),
-('malik.hassanne@edu.ece.fr', '123456789', 'Hassanne', 'Malik', '45 rue clamart zoo', '0987654321'),
-('gabrielguietdupre@gmail.com', '123456789', 'Guiet-Dupré', 'Gabriel', '37 rue des fleurs', '0768290664');
+INSERT INTO `client` (`email`, `password`, `nom`, `prenom`, `adresse`, `tel`, `photo`, `id`) VALUES
+('matteo.leon@edu.ece.fr', '123456789', 'leon', 'matteo', 'boulogne', '5678655789', NULL, 1),
+('malik.hassanne@edu.ece.fr', '123456789', 'Hassanne', 'Malik', '45 rue clamart zoo', '0987654321', NULL, 2),
+('gabrielguietdupre@gmail.com', '123456789', 'Guiet-Dupré', 'Gabriel', '37 rue des fleurs', '0768290664', 0x75706c6f6164732f49445f70686f746f2e6a7067, 3);
 
 -- --------------------------------------------------------
 

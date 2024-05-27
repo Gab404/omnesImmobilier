@@ -1,39 +1,18 @@
 <?php
 session_start();
-
-// Informations de connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "omnesimmobilier";
-
-// Création de la connexion
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Vérification de la connexion
-if ($conn->connect_error) {
-    die("Connexion échouée: " . $conn->connect_error);
-}
-
-// Requête SQL pour récupérer les données des agents
-$sql = "SELECT email, nom, prenom, photoPath FROM agent";
-$result = $conn->query($sql);
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-
     <style>
         body {
             background-color: white;
@@ -46,46 +25,13 @@ $result = $conn->query($sql);
             width: 100%;
             height: 400px;
         }
-        .card {
-            margin: 15px;
-            border: none;
-            overflow: hidden;
-            position: relative;
-        }
-        .card img {
-            transition: transform 0.5s ease;
-        }
-        .card:hover img {
-            transform: scale(1.1);
-        }
-        .card .card-body {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height:100%;
-            width: 100%;
-            background: rgba(0, 123, 255, 0.3);
-            color: white;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        .card:hover .card-body {
-            opacity: 1;
-        }
-        .card-title, .card-text{
-            color: white;
-        }
-        .btn-cv {
-            width: 40%;
-        }
         .hero-image {
             width: 100%;
             height: 500px;
             object-fit: cover;
         }
     </style>
-
-    <title>Omnes Immobilier - Agents</title>
+    <title>Omnes Immobilier - Mon Compte</title>
 </head>
 <body>
     <div class="site-mobile-menu">
@@ -107,10 +53,10 @@ $result = $conn->query($sql);
                     <nav class="site-navigation position-relative text-right" role="navigation">
                         <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                             <li><a href="index.php"><span>Home</span></a></li>
-                            <li class="has-children active">
+                            <li class="has-children">
                                 <a href="#"><span>Recherche</span></a>
                                 <ul class="dropdown arrow-top">
-                                    <li class="active"><a href="agent.php">Agent</a></li>
+                                    <li><a href="agent.php">Agent</a></li>
                                     <li><a href="#">Immobilier Résidentiel</a></li>
                                     <li><a href="#">Terrain</a></li>
                                     <li><a href="#">Appartement à Louer</a></li>
@@ -120,7 +66,7 @@ $result = $conn->query($sql);
                             <li><a href="#"><span>Rendez-Vous</span></a></li>
                             <?php
                             if(isset($_SESSION['email'])) {
-                                echo '<li><a href="myAccount.php"><span>Mon Compte</span></a></li>';
+                                echo '<li class="active"><a href="myAccount.php"><span>Mon Compte</span></a></li>';
                                 echo '<li><a href="logout.php"><span>Déconnexion</span></a></li>';
                             } else {
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
@@ -139,50 +85,73 @@ $result = $conn->query($sql);
         </div>
     </header>
 
-    <?php if(isset($_SESSION['account_created'])): ?>
-        <div id="notificationContainer" class="alert alert-success position-fixed w-25 text-center fixed-top mx-auto" role="alert" style="z-index: 9999; background-color: rgba(215, 237, 218, 0.9); top: 20px;">
-            <strong>Votre compte a été créé avec succès!</strong>
-        </div>
-        <?php unset($_SESSION['account_created']); ?>
-    <?php endif; ?>
-
     <section id="accueil" class="mt-0">
-        <img src="assets/bgAgent.jpg" class="hero-image" alt="Hero Image">
+        <img src="assets/bgAccount.jpg" class="hero-image" alt="Hero Image">
     </section>
 
     <div class="container mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black; ">Nos Agents</h1>
-        <div class="container mt-3 text-center" style="width: 30%;">
-        <div class="row">
-            <div class="col-md-12">
-                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par nom">
-            </div>
-        </div>
-    </div>
-        <div class="row" id="searchResult">
+        <h1 class="my-4 text-center mb-5" style="color: #007bff;">
+            Bonjour <span style="color: black;"><?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?></span>
+        </h1>
+
+        <div class="row align-items-center justify-content-center">
+    <div class="col-md-6">
+        <div class="text-center">
             <?php
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    echo '<div class="col-md-4">';
-                    echo '    <div class="card">';
-                    echo '        <img src="' . $row["photoPath"] . '" class="card-img-top" alt="Photo de ' . $row["prenom"] . ' ' . $row["nom"] . '">';
-                    echo '        <div class="card-body d-flex flex-column">';
-                    echo '            <div class="mt-auto text-center">';
-                    echo '              <h5 class="card-title">' . $row["prenom"] . ' ' . $row["nom"] . '</h5>';
-                    echo '              <p class="card-text">' . $row["email"] . '</p>';
-                    echo '              <a href="#" class="btn btn-primary btn-cv">CV</a>';
-                    echo '            </div>';
-                    echo '        </div>';
-                    echo '    </div>';
-                    echo '</div>';                    
-                }
+            if (isset($_SESSION['photo']) && !empty($_SESSION['photo'])) {
+                echo '<img src="' . $_SESSION['photo'] . '" alt="Photo de profil" style="width: 150px; height: 150px; margin: 5% 0; border-radius: 10rem;">';
             } else {
-                echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
+                echo '<img src="assets/photoAccount.jpg" alt="Photo de profil par défaut" style="max-width: 20%; margin: 5% 0;">';
             }
-            $conn->close();
             ?>
+            <form id="uploadForm" action="upload.php" method="post" enctype="multipart/form-data" style="position: relative; display: inline-block;">
+                <input type="file" name="photo" accept="image/*" required onchange="document.getElementById('uploadForm').submit();" style="opacity: 0; position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
+                <button type="button" class="btn btn-primary" style="pointer-events: none; margin: 0 10%; font-size: 70%;">Modifier</button>
+            </form>
+
+            <p><strong>Email :</strong> 
+                <span id="emailDisplay"><?php echo isset($_SESSION['email']) ? $_SESSION['email'] : 'Email non défini'; ?></span>
+                <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('email')">Modifier</button>
+                <form id="emailForm" action="upload.php" method="post" style="display: none; inline-block;">
+                    <input type="email" name="email" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" required>
+                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                </form>
+            </p>
+
+            <p><strong>Adresse :</strong> 
+                <span id="adresseDisplay"><?php echo isset($_SESSION['adresse']) ? $_SESSION['adresse'] : 'Adresse non définie'; ?></span>
+                <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('adresse')">Modifier</button>
+                <form id="adresseForm" action="upload.php" method="post" style="display: none; inline-block;">
+                    <input type="text" name="adresse" value="<?php echo isset($_SESSION['adresse']) ? $_SESSION['adresse'] : ''; ?>" required>
+                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                </form>
+            </p>
+
+            <p><strong>Téléphone :</strong> 
+                <span id="telDisplay"><?php echo isset($_SESSION['tel']) ? $_SESSION['tel'] : 'Téléphone non défini'; ?></span>
+                <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('tel')">Modifier</button>
+                <form id="telForm" action="upload.php" method="post" style="display: none; inline-block;">
+                    <input type="tel" name="tel" value="<?php echo isset($_SESSION['tel']) ? $_SESSION['tel'] : ''; ?>" required>
+                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                </form>
+            </p>
         </div>
     </div>
+</div>
+
+<script>
+function editField(field) {
+    document.getElementById(field + 'Display').style.display = 'none';
+    document.getElementById(field + 'Form').style.display = 'inline-block';
+}
+</script>
+
+
+
+        </div>
+    </div>
+</div>
+
 
     <footer class="footer">
         <div class="container">
@@ -216,47 +185,11 @@ $result = $conn->query($sql);
         </div>
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var successMessage = document.getElementById('notificationContainer');
-            if (successMessage) {
-                setTimeout(function () {
-                    successMessage.style.display = 'none';
-                }, 3000);
-            }
-        });
-    </script>
-
-<script>
-    document.getElementById("searchInput").addEventListener("input", function() {
-        var inputVal = this.value;
-        searchAgents(inputVal);
-    });
-
-    function searchAgents(inputVal) {
-    var searchQuery = inputVal;
-    fetch('searchAgent.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'searchQuery=' + encodeURIComponent(searchQuery),
-    })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('searchResult').innerHTML = data;
-    })
-    .catch(error => {
-        console.error('Erreur lors de la recherche:', error);
-    });
-}
-
-</script>
-
-
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.sticky.js"></script>
 <script src="js/main.js"></script>
 
+</body>
+</html>
