@@ -58,7 +58,7 @@ session_start();
                 <li class="has-children">
                   <a href="about.html"><span>Recherche</span></a>
                   <ul class="dropdown arrow-top">
-                    <li><a href="#">Agent</a></li>
+                    <li><a href="agent.php">Agent</a></li>
                     <li><a href="#">Immobilier Résidentiel</a></li>
                     <li><a href="#">Terrain</a></li>
                     <li><a href="#">Appartement à Louer</a></li>
