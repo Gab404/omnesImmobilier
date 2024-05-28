@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mar. 28 mai 2024 à 11:03
+-- Généré le : mar. 28 mai 2024 à 21:35
 -- Version du serveur : 8.2.0
 -- Version de PHP : 8.2.13
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `compte` (
   `type` int DEFAULT NULL,
   `photoPath` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `compte`
@@ -55,7 +55,8 @@ INSERT INTO `compte` (`email`, `password`, `nom`, `prenom`, `adresse`, `tel`, `p
 ('charlene.phung@omnes.immobilier.com', 'password', 'Phung', 'Charlene', '', '0897115587', NULL, 6, 2, 'assets/agent/charlenePhung.jpg'),
 ('maiky.nunez@omnes.immobilier.com', 'password', 'Nunez', 'Maiky', '', '0813265722', NULL, 7, 2, 'assets/agent/maikyNunez.jpg'),
 ('maimouna.ndiaye@omnes.immobilier.com', 'password', 'Ndiaye', 'Maimouna', '', '0878008474', NULL, 8, 2, 'assets/agent/maimounaNdiaye.jpg'),
-('tommaso.nicolazzo@example.com', 'password', 'Nicolazzo', 'Tommaso', '', '0962769532', NULL, 9, 2, 'assets/agent/tommasoNicolazzo.jpg');
+('tommaso.nicolazzo@example.com', 'password', 'Nicolazzo', 'Tommaso', '', '0962769532', NULL, 9, 2, 'assets/agent/tommasoNicolazzo.jpg'),
+('popop@gmail.com', '123456789', 'test', 'eliot', '23 rue du lac', '963597543', NULL, 10, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -111,6 +112,23 @@ INSERT INTO `immobilier` (`id`, `photoPath`, `description`, `nbPiece`, `nbChambr
 (25, 'assets/immobilier/0025.jpg', 'Duplex avec terrasse.', 5, 3, 150, '11 Rue des Terrasses, Ville T', '', 'residentiel', 300000, 'maimouna.ndiaye@omnes.immobilier.com'),
 (26, 'assets/immobilier/0026.jpg', 'Maison de campagne tranquille.', 4, 3, 180, '12 Chemin des Champs, Village U', '', 'residentiel', 360000, 'tommaso.nicolazzo@example.com'),
 (27, 'assets/immobilier/0027.jpg', 'Penthouse avec vue panoramique.', 4, 2, 220, '13 Rue des Cimes, Ville V', '', 'residentiel', 440000, 'mendy.furmansky@omnes.immobilier.com');
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `planning`
+--
+
+DROP TABLE IF EXISTS `planning`;
+CREATE TABLE IF NOT EXISTS `planning` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `mailClient` varchar(255) NOT NULL,
+  `mailAgent` varchar(255) NOT NULL,
+  `date` date NOT NULL,
+  `adresse` varchar(255) NOT NULL,
+  `digicode` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

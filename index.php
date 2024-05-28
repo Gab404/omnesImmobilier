@@ -72,7 +72,7 @@ session_start();
                   </ul>
                 </li>
                 <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
-                <li><a href="#"><span>Rendez-Vous</span></a></li>
+                <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
                 <?php
                   // Vérifiez si l'utilisateur est connecté
                   if(isset($_SESSION['email'])) {
@@ -142,7 +142,9 @@ session_start();
 </section>
     </br></br>
     </br></br>
-    </section class ="TextPresentation">Bienvenue chez OmnesImmobilier, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</section>
+    <section class="TextPresentation bg-light p-3 text-center">
+      <p>Bienvenue chez Omnes Immobilier, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</p>
+    </section>
     </br></br>
     </br></br>
 <footer class="footer">

@@ -146,7 +146,7 @@ $result = $conn->query($sql);
                                 </ul>
                             </li>
                             <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
-                            <li><a href="#"><span>Rendez-Vous</span></a></li>
+                            <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
                             <?php
                             if(isset($_SESSION['email'])) {
                                 echo '<li><a href="myAccount.php"><span>Mon Compte</span></a></li>';
