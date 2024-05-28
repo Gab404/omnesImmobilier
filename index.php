@@ -26,6 +26,12 @@ session_start();
             width: 100%;
             height: 400px;
         }
+        .TextPresentation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%; 
+        }
     </style>
 
     <title>Omnes Immobilier - Home</title>
@@ -136,14 +142,14 @@ session_start();
 </section>
     </br></br>
     </br></br>
-    </br></br>
+    </section class ="TextPresentation">Bienvenue chez OmnesImmobilier, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</section>
     </br></br>
     </br></br>
 <footer class="footer">
         <div class="container">
             <div class="row text-center">
                 <div class="site-logo col-md-12 mb-3">
-                    <h5 class="mb-0 site-logo" style="font-size: 160%;">Omnes Immobilier</h5>
+                    <h5 class="mb-0 site-logo" style="font-size: 160%;">Omnes Immobilier: Votre Partenaire de Confiance en Immobilier</h5>
                 </div>
                 <div class="col-md-4 mb-3">
                     <p>Adresse : 10 Rue Sextius Michel, 75015 Paris, France</p>
