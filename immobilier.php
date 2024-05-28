@@ -16,7 +16,26 @@ if ($conn->connect_error) {
 }
 
 // Requête SQL pour récupérer les données des biens immobiliers
-$sql = "SELECT photoPath, description, nbPiece, nbChambre, dimension, adresse, type, prix FROM immobilier ORDER BY RAND()";
+$sql = "
+    SELECT 
+        c.photoPath AS agentPhoto,
+        c.email AS agentEmail,
+        i.photoPath AS immobilierPhoto, 
+        i.description, 
+        i.nbPiece, 
+        i.nbChambre, 
+        i.dimension, 
+        i.adresse, 
+        i.type, 
+        i.prix
+    FROM 
+        immobilier i
+    JOIN 
+        compte c ON i.agent = c.email
+    WHERE
+        c.type = 2
+    ORDER BY 
+        RAND()";
 $result = $conn->query($sql);
 ?>
 
@@ -25,15 +44,12 @@ $result = $conn->query($sql);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-
     <style>
         body {
             background-color: white;
@@ -62,7 +78,7 @@ $result = $conn->query($sql);
             position: absolute;
             top: 0;
             left: 0;
-            height:100%;
+            height: 100%;
             width: 100%;
             background: rgba(0, 123, 255, 0.3);
             color: white;
@@ -72,7 +88,7 @@ $result = $conn->query($sql);
         .card:hover .card-body {
             opacity: 1;
         }
-        .card-title, .card-text{
+        .card-title, .card-text {
             color: white;
         }
         .hero-image {
@@ -81,12 +97,20 @@ $result = $conn->query($sql);
             object-fit: cover;
         }
         .card-img-top {
-        width: 100%;
-        height: 200px; /* Ajustez la hauteur selon vos besoins */
-        object-fit: cover;
+            width: 100%;
+            height: 200px; /* Ajustez la hauteur selon vos besoins */
+            object-fit: cover;
+        }
+        .agent-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            left: 5%;
+            bottom: 5%;
         }
     </style>
-
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
 <body>
@@ -167,13 +191,14 @@ $result = $conn->query($sql);
                     while($row = $result->fetch_assoc()) {
                         echo '<div class="col-md-4">';
                         echo '    <div class="card">';
-                        echo '        <img src="' . $row["photoPath"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
+                        echo '        <img src="' . $row["immobilierPhoto"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
                         echo '        <div class="card-body d-flex flex-column">';
                         echo '            <div class="mt-auto text-center">';
                         echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
                         echo '              <p class="card-text">' . $row["adresse"] . '</p>';
                         echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
                         echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
+                        echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
                         echo '            </div>';
                         echo '        </div>';
                         echo '    </div>';

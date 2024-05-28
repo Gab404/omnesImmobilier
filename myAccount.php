@@ -99,7 +99,7 @@ session_start();
         <div class="text-center">
             <?php
             if (isset($_SESSION['photo']) && !empty($_SESSION['photo'])) {
-                echo '<img src="' . $_SESSION['photo'] . '" alt="Photo de profil" style="width: 150px; height: 150px; margin: 5% 0; border-radius: 10rem;">';
+                echo '<img src="' . $_SESSION['photo'] . '" alt="Photo de profil" style="width: 120px; height: 120px; margin: 5% 0; border-radius: 50%; object-fit: cover;">';
             } else {
                 echo '<img src="assets/photoAccount.jpg" alt="Photo de profil par défaut" style="max-width: 20%; margin: 5% 0;">';
             }

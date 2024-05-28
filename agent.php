@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 }
 
 // Requête SQL pour récupérer les données des agents
-$sql = "SELECT email, nom, prenom, photoPath FROM agent";
+$sql = "SELECT email, nom, prenom, photoPath FROM compte WHERE type = 2";
 $result = $conn->query($sql);
 ?>
 

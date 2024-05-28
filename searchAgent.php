@@ -14,10 +14,10 @@ if ($conn->connect_error) {
 
 $searchQuery = $_POST['searchQuery'];
 if ($searchQuery !== '') {
-    $sql = "SELECT email, nom, prenom, photoPath FROM agent WHERE nom LIKE '%$searchQuery%'";
+    $sql = "SELECT email, nom, prenom, photoPath FROM compte WHERE type = 2 AND nom LIKE '$searchQuery%' or prenom LIKE '$searchQuery%'";
 } else {
-    // Si l'input est vide, récupérer tous les agents
-    $sql = "SELECT email, nom, prenom, photoPath FROM agent";
+    // Si l'input est vide, récupérer tous les comptes de type 2
+    $sql = "SELECT email, nom, prenom, photoPath FROM compte WHERE type = 2";
 }
 $result = $conn->query($sql);
 

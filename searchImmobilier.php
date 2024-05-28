@@ -14,10 +14,41 @@ if ($conn->connect_error) {
 
 $searchInput = $_POST['searchInput'];
 if ($searchInput !== '') {
-    $sql = "SELECT photoPath, description, nbPiece, nbChambre, dimension, adresse, type, prix FROM immobilier WHERE id = '$searchInput' OR adresse LIKE '%$searchInput%'";
+    $sql = "SELECT 
+                i.photoPath, 
+                i.description, 
+                i.nbPiece, 
+                i.nbChambre, 
+                i.dimension, 
+                i.adresse, 
+                i.type, 
+                i.prix,
+                c.photoPath AS agentPhoto,
+                c.email AS agentEmail
+            FROM 
+                immobilier i
+            JOIN 
+                compte c ON i.agent = c.email
+            WHERE 
+                i.id = '$searchInput' OR i.adresse LIKE '%$searchInput%'";
 } else {
-    $sql = "SELECT photoPath, description, nbPiece, nbChambre, dimension, adresse, type, prix FROM immobilier";
+    $sql = "SELECT 
+                i.photoPath, 
+                i.description, 
+                i.nbPiece, 
+                i.nbChambre, 
+                i.dimension, 
+                i.adresse, 
+                i.type, 
+                i.prix,
+                c.photoPath AS agentPhoto,
+                c.email AS agentEmail
+            FROM 
+                immobilier i
+            JOIN 
+                compte c ON i.agent = c.email";
 }
+
 
 $result = $conn->query($sql);
 
@@ -32,6 +63,7 @@ if ($result->num_rows > 0) {
         echo '              <p class="card-text">' . $row["adresse"] . '</p>';
         echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
         echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
+        echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
         echo '            </div>';
         echo '        </div>';
         echo '    </div>';
