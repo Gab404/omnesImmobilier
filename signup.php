@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tel = $_POST['tel'];
 
     // Requête SQL pour insérer un nouvel utilisateur
-    $sql = "INSERT INTO client (email, password, prenom, nom, adresse, tel) VALUES ('$email', '$password', '$prenom', '$nom', '$adresse', '$tel')";
+    $sql = "INSERT INTO compte (email, password, prenom, nom, adresse, tel, type) VALUES ('$email', '$password', '$prenom', '$nom', '$adresse', '$tel', 1)";
 
     if ($conn->query($sql) === TRUE) {
         // Utilisateur inséré avec succès, rediriger vers une autre page par exemple

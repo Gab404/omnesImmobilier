@@ -59,9 +59,10 @@ session_start();
                   <a href="#"><span>Recherche</span></a>
                   <ul class="dropdown arrow-top">
                     <li><a href="agent.php">Agent</a></li>
-                    <li><a href="#">Immobilier Résidentiel</a></li>
-                    <li><a href="#">Terrain</a></li>
-                    <li><a href="#">Appartement à Louer</a></li>
+                    <li><a href="residentiel.php">Immobilier Résidentiel</a></li>
+                    <li><a href="terrain.php">Terrain</a></li>
+                    <li><a href="location.php">Appartement à Louer</a></li>
+                    <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
                   </ul>
                 </li>
                 <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>

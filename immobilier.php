@@ -137,9 +137,10 @@ $result = $conn->query($sql);
                                 <a href="#"><span>Recherche</span></a>
                                 <ul class="dropdown arrow-top">
                                     <li><a href="agent.php">Agent</a></li>
-                                    <li><a href="#">Immobilier Résidentiel</a></li>
-                                    <li><a href="#">Terrain</a></li>
-                                    <li><a href="#">Appartement à Louer</a></li>
+                                    <li><a href="residentiel.php">Immobilier Résidentiel</a></li>
+                                    <li><a href="terrain.php">Terrain</a></li>
+                                    <li><a href="location.php">Appartement à Louer</a></li>
+                                    <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
                                 </ul>
                             </li>
                             <li class="active"><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
@@ -173,7 +174,7 @@ $result = $conn->query($sql);
     <?php endif; ?>
 
     <section id="accueil" class="mt-0">
-        <img src="assets/bgImmobilier.jpg" class="hero-image" alt="Hero Image">
+        <img src="assets/Immobilier.jpg" class="hero-image" alt="Hero Image">
     </section>
 
     <div class="container mt-5">

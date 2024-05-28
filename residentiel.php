@@ -15,8 +15,29 @@ if ($conn->connect_error) {
     die("Connexion échouée: " . $conn->connect_error);
 }
 
-// Requête SQL pour récupérer les données des agents
-$sql = "SELECT email, nom, prenom, photoPath FROM compte WHERE type = 2";
+// Requête SQL pour récupérer les données des biens immobiliers
+$sql = "
+    SELECT 
+        c.photoPath AS agentPhoto,
+        c.email AS agentEmail,
+        i.photoPath AS immobilierPhoto, 
+        i.description, 
+        i.nbPiece, 
+        i.nbChambre, 
+        i.dimension, 
+        i.adresse, 
+        i.type, 
+        i.prix
+    FROM 
+        immobilier i
+    JOIN 
+        compte c ON i.agent = c.email
+    WHERE
+        c.type = 2
+        AND i.type = 'residentiel'
+    ORDER BY 
+        RAND()";
+
 $result = $conn->query($sql);
 ?>
 
@@ -25,15 +46,12 @@ $result = $conn->query($sql);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
-
     <style>
         body {
             background-color: white;
@@ -62,7 +80,7 @@ $result = $conn->query($sql);
             position: absolute;
             top: 0;
             left: 0;
-            height:100%;
+            height: 100%;
             width: 100%;
             background: rgba(0, 123, 255, 0.3);
             color: white;
@@ -72,20 +90,30 @@ $result = $conn->query($sql);
         .card:hover .card-body {
             opacity: 1;
         }
-        .card-title, .card-text{
+        .card-title, .card-text {
             color: white;
-        }
-        .btn-cv {
-            width: 40%;
         }
         .hero-image {
             width: 100%;
             height: 500px;
             object-fit: cover;
         }
+        .card-img-top {
+            width: 100%;
+            height: 200px; /* Ajustez la hauteur selon vos besoins */
+            object-fit: cover;
+        }
+        .agent-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            left: 5%;
+            bottom: 5%;
+        }
     </style>
-
-    <title>Omnes Immobilier - Agents</title>
+    <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
 <body>
     <div class="site-mobile-menu">
@@ -110,8 +138,8 @@ $result = $conn->query($sql);
                             <li class="has-children active">
                                 <a href="#"><span>Recherche</span></a>
                                 <ul class="dropdown arrow-top">
-                                    <li class="active"><a href="agent.php">Agent</a></li>
-                                    <li><a href="residentiel.php">Immobilier Résidentiel</a></li>
+                                    <li><a href="agent.php">Agent</a></li>
+                                    <li class="active"><a href="residentiel.php">Immobilier Résidentiel</a></li>
                                     <li><a href="terrain.php">Terrain</a></li>
                                     <li><a href="location.php">Appartement à Louer</a></li>
                                     <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
@@ -148,39 +176,41 @@ $result = $conn->query($sql);
     <?php endif; ?>
 
     <section id="accueil" class="mt-0">
-        <img src="assets/bgAgent.jpg" class="hero-image" alt="Hero Image">
+        <img src="assets/bgResidentiel.jpg" class="hero-image" alt="Hero Image">
     </section>
 
     <div class="container mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black; ">Nos Agents</h1>
+        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Biens Résidentiels</h1>
         <div class="container mt-3 text-center" style="width: 30%;">
-        <div class="row">
-            <div class="col-md-12">
-                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par nom ou prenom">
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par adresse ou id">
+                </div>
             </div>
         </div>
-    </div>
         <div class="row" id="searchResult">
             <?php
-            if ($result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
-                    echo '<div class="col-md-4">';
-                    echo '    <div class="card">';
-                    echo '        <img src="' . $row["photoPath"] . '" class="card-img-top" alt="Photo de ' . $row["prenom"] . ' ' . $row["nom"] . '">';
-                    echo '        <div class="card-body d-flex flex-column">';
-                    echo '            <div class="mt-auto text-center">';
-                    echo '              <h5 class="card-title">' . $row["prenom"] . ' ' . $row["nom"] . '</h5>';
-                    echo '              <p class="card-text">' . $row["email"] . '</p>';
-                    echo '              <a href="#" class="btn btn-primary btn-cv">CV</a>';
-                    echo '            </div>';
-                    echo '        </div>';
-                    echo '    </div>';
-                    echo '</div>';                    
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        echo '<div class="col-md-4">';
+                        echo '    <div class="card">';
+                        echo '        <img src="' . $row["immobilierPhoto"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
+                        echo '        <div class="card-body d-flex flex-column">';
+                        echo '            <div class="mt-auto text-center">';
+                        echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
+                        echo '              <p class="card-text">' . $row["adresse"] . '</p>';
+                        echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
+                        echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
+                        echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
+                        echo '            </div>';
+                        echo '        </div>';
+                        echo '    </div>';
+                        echo '</div>';                    
+                    }
+                } else {
+                    echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
                 }
-            } else {
-                echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
-            }
-            $conn->close();
+                $conn->close();
             ?>
         </div>
     </div>
@@ -231,17 +261,17 @@ $result = $conn->query($sql);
 <script>
     document.getElementById("searchInput").addEventListener("input", function() {
         var inputVal = this.value;
-        searchAgents(inputVal);
+        searchResidentiels(inputVal);
     });
 
-    function searchAgents(inputVal) {
-    var searchQuery = inputVal;
-    fetch('searchAgent.php', {
+    function searchResidentiels(inputVal) {
+    var searchInput = inputVal;
+    fetch('searchResidentiel.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: 'searchQuery=' + encodeURIComponent(searchQuery),
+        body: 'searchInput=' + encodeURIComponent(searchInput),
     })
     .then(response => response.text())
     .then(data => {

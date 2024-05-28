@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Requête SQL pour vérifier l'utilisateur
-    $sql = "SELECT * FROM client WHERE email = '$email' AND password = '$password'";
+    $sql = "SELECT * FROM compte WHERE email = '$email' AND password = '$password'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
