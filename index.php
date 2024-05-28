@@ -32,6 +32,25 @@ session_start();
             align-items: center;
             height: 100%; 
         }
+        .presentation {
+            max-width: 600px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin: auto;
+            color : black;
+        }
+
+        .presentation h1, .presentation h2, .presentation h3, .presentation h4, .presentation h5, .presentation h6 {
+            text-align: center;
+        }
+
+        .presentation p {
+            text-align: left;
+            color: black;
+        }
+        
     </style>
 
     <title>Omnes Immobilier - Home</title>
@@ -142,7 +161,31 @@ session_start();
 </section>
     </br></br>
     </br></br>
-    </section class ="TextPresentation">Bienvenue chez OmnesImmobilier, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</section>
+    <div class="presentation">
+        <h1>OmnesImmobilier : Votre Partenaire de Confiance en Immobilier</h1>
+        <br></br>
+        <p>Bienvenue chez <strong>OmnesImmobilier</strong>, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</p>
+        
+        <div class="section-title">Notre Mission</div>
+        <p>Chez OmnesImmobilier, notre mission est simple : vous offrir un service personnalisé et de qualité pour répondre à toutes vos attentes. Nous nous engageons à vous fournir des solutions adaptées à vos besoins spécifiques, en mettant l'accent sur la transparence, la fiabilité et la satisfaction client.</p>
+        
+        <div class="section-title">Nos Services</div>
+        <p><strong>Achat et Vente</strong> : Que vous soyez à la recherche de votre résidence principale, d'une résidence secondaire ou d'un investissement locatif, nous vous aidons à trouver le bien idéal. Notre équipe d'experts vous accompagne également dans la vente de votre propriété, en vous proposant une estimation précise et en mettant en place des stratégies de marketing efficaces pour une vente rapide et au meilleur prix.</p>
+        <p><strong>Location</strong> : Nous vous aidons à trouver le locataire parfait pour votre bien ou à dénicher la location qui répond à tous vos critères. Grâce à notre réseau et notre expertise, nous assurons une gestion locative sans tracas.</p>
+        <p><strong>Gestion de Biens</strong> : Libérez-vous des contraintes de la gestion immobilière grâce à nos services complets de gestion de biens. Nous prenons en charge toutes les démarches administratives et techniques pour que vous puissiez profiter de vos investissements en toute sérénité.</p>
+        <p><strong>Conseil en Investissement</strong> : Bénéficiez de notre expertise pour optimiser vos investissements immobiliers. Nous vous guidons dans le choix des meilleurs placements et vous accompagnons dans leur gestion pour maximiser votre rentabilité.</p>
+        
+        <div class="section-title">Nos Valeurs</div>
+        <p><strong>Professionnalisme</strong> : Notre équipe est composée de professionnels passionnés et expérimentés, dédiés à vous offrir un service irréprochable.</p>
+        <p><strong>Écoute et Proximité</strong> : Nous privilégions une relation de proximité avec nos clients, basée sur l'écoute et la compréhension de vos besoins.</p>
+        <p><strong>Innovation</strong> : Toujours à l'affût des dernières tendances et technologies, nous utilisons des outils modernes pour optimiser nos services et vous offrir une expérience client exceptionnelle.</p>
+        
+        <div class="section-title">Contactez-nous</div>
+        <p>N'attendez plus pour concrétiser vos projets immobiliers ! Contactez-nous dès aujourd'hui pour discuter de vos besoins et découvrir comment nous pouvons vous aider à réaliser vos ambitions.</p>
+        
+        <p><strong>OmnesImmobilier</strong><br>
+        Votre avenir commence ici.</p>
+    </div>
     </br></br>
     </br></br>
 <footer class="footer">
