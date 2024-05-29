@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 }
 
 // Requête SQL pour récupérer les données des agents
-$sql = "SELECT email, nom, prenom, photoPath FROM compte WHERE type = 2";
+$sql = "SELECT email, nom, prenom, photoPath, cvPath FROM compte WHERE type = 2";
 $result = $conn->query($sql);
 ?>
 
@@ -25,14 +25,12 @@ $result = $conn->query($sql);
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
-
     <style>
         body {
             background-color: white;
@@ -61,7 +59,7 @@ $result = $conn->query($sql);
             position: absolute;
             top: 0;
             left: 0;
-            height:100%;
+            height: 100%;
             width: 100%;
             background: rgba(0, 123, 255, 0.3);
             color: white;
@@ -71,7 +69,7 @@ $result = $conn->query($sql);
         .card:hover .card-body {
             opacity: 1;
         }
-        .card-title, .card-text{
+        .card-title, .card-text {
             color: white;
         }
         .btn-cv {
@@ -83,7 +81,6 @@ $result = $conn->query($sql);
             object-fit: cover;
         }
     </style>
-
     <title>Omnes Immobilier - Agents</title>
 </head>
 <body>
@@ -151,14 +148,14 @@ $result = $conn->query($sql);
     </section>
 
     <div class="container-fluid mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black; ">Nos Agents</h1>
+        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Agents</h1>
         <div class="container-fluid mt-3 text-center" style="width: 30%;">
-        <div class="row">
-            <div class="col-md-12">
-                <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par nom ou prenom">
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par nom ou prénom">
+                </div>
             </div>
         </div>
-    </div>
         <div class="row" id="searchResult">
             <?php
             if ($result->num_rows > 0) {
@@ -170,7 +167,7 @@ $result = $conn->query($sql);
                     echo '            <div class="mt-auto text-center">';
                     echo '              <h5 class="card-title">' . $row["prenom"] . ' ' . $row["nom"] . '</h5>';
                     echo '              <p class="card-text">' . $row["email"] . '</p>';
-                    echo '              <a href="#" class="btn btn-primary btn-cv">CV</a>';
+                    echo '              <a href="#" data-cv="' . addslashes($row["cvPath"]) . '" class="btn btn-primary btn-cv">CV</a>';
                     echo '            </div>';
                     echo '        </div>';
                     echo '    </div>';
@@ -181,6 +178,23 @@ $result = $conn->query($sql);
             }
             $conn->close();
             ?>
+        </div>
+    </div>
+
+    <!-- Modal pour afficher le CV -->
+    <div class="modal fade" id="cvModal" tabindex="-1" role="dialog" aria-labelledby="cvModalLabel" aria-hidden="true" style="z-index: 2000;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cvModalLabel">CV</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="cvImage" src="" alt="CV" class="img-fluid">
+                </div>
+            </div>
         </div>
     </div>
 
@@ -215,7 +229,7 @@ $result = $conn->query($sql);
             </div>
         </div>
     </footer>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var successMessage = document.getElementById('notificationContainer');
@@ -225,38 +239,48 @@ $result = $conn->query($sql);
                 }, 3000);
             }
         });
+
+        $(document).ready(function() {
+            $('.btn-cv').on('click', function() {
+                var cvPath = decodeURIComponent($(this).data('cv')); // Récupère le chemin du CV et décode les backslashes échappés
+                cvPath = 'uploads/' + cvPath; // Ajoute le chemin du dossier uploads
+                console.log(cvPath); // Vérifiez la valeur de cvPath
+                $('#cvImage').attr('src', cvPath); // Met à jour l'attribut src de l'image dans le modal
+                
+                // Ouvre le modal
+                $('#cvModal').modal('show');
+            });
+        });
+
+
+        // Recherche dynamique des agents
+        document.getElementById("searchInput").addEventListener("input", function() {
+            var inputVal = this.value;
+            searchAgents(inputVal);
+        });
+
+        function searchAgents(inputVal) {
+            var searchQuery = inputVal;
+            fetch('searchAgent.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'searchQuery=' + encodeURIComponent(searchQuery),
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('searchResult').innerHTML = data;
+            })
+            .catch(error => {
+                console.error('Erreur lors de la recherche:', error);
+            });
+        }
     </script>
-
-<script>
-    document.getElementById("searchInput").addEventListener("input", function() {
-        var inputVal = this.value;
-        searchAgents(inputVal);
-    });
-
-    function searchAgents(inputVal) {
-    var searchQuery = inputVal;
-    fetch('searchAgent.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'searchQuery=' + encodeURIComponent(searchQuery),
-    })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('searchResult').innerHTML = data;
-    })
-    .catch(error => {
-        console.error('Erreur lors de la recherche:', error);
-    });
-}
-
-</script>
-
-
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.sticky.js"></script>
-<script src="js/main.js"></script>
-
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

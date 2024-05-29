@@ -38,11 +38,12 @@ session_start();
 
         .presentation h1, .presentation h2, .presentation h3, .presentation h4, .presentation h5, .presentation h6 {
             text-align: center;
+            color: #333;
         }
 
         .presentation p {
             text-align: left;
-            color: black;
+            color: #505050;
         }
         
     </style>
@@ -187,7 +188,7 @@ session_start();
         <div class="container-fluid">
             <div class="row text-center">
                 <div class="site-logo col-md-12 mb-3">
-                    <h5 class="mb-0 site-logo" style="font-size: 160%;">Omnes Immobilier: Votre Partenaire de Confiance en Immobilier</h5>
+                    <h5 class="mb-0 site-logo" style="font-size: 160%;">Omnes Immobilier</h5>
                 </div>
                 <div class="col-md-4 mb-3">
                     <p>Adresse : 10 Rue Sextius Michel, 75015 Paris, France</p>

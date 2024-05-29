@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `compte` (
   `id` int NOT NULL AUTO_INCREMENT,
   `type` int DEFAULT NULL,
   `photoPath` varchar(255) DEFAULT NULL,
+  `cvPath` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -46,17 +47,17 @@ CREATE TABLE IF NOT EXISTS `compte` (
 -- Déchargement des données de la table `compte`
 --
 
-INSERT INTO `compte` (`email`, `password`, `nom`, `prenom`, `adresse`, `tel`, `photo`, `id`, `type`, `photoPath`) VALUES
-('matteo.leon@edu.ece.fr', '123456789', 'leon', 'matteo', 'boulogne', '5678655789', NULL, 1, 1, NULL),
-('malik.hassanne@edu.ece.fr', '123456789', 'Hassanne', 'Malik', '45 rue clamart zoo', '0987654321', NULL, 2, 1, NULL),
-('gabrielguietdupre@gmail.com', '123456789', 'Guiet-Dupré', 'Gabriel', '37 rue des fleurs', '0768290664', 0x75706c6f6164732f49445f70686f746f2e6a7067, 3, 1, NULL),
-('shani.blumel@omnes.immobilier.com', 'password', 'Blumel', 'Shani', '', '0694230108', NULL, 4, 2, 'assets/agent/shaniBlumel.jpg'),
-('mendy.furmansky@omnes.immobilier.com', 'password', 'Furmansky', 'Mendy', '', '0981325607', NULL, 5, 2, 'assets/agent/mendyFurmansky.jpg'),
-('charlene.phung@omnes.immobilier.com', 'password', 'Phung', 'Charlene', '', '0897115587', NULL, 6, 2, 'assets/agent/charlenePhung.jpg'),
-('maiky.nunez@omnes.immobilier.com', 'password', 'Nunez', 'Maiky', '', '0813265722', NULL, 7, 2, 'assets/agent/maikyNunez.jpg'),
-('maimouna.ndiaye@omnes.immobilier.com', 'password', 'Ndiaye', 'Maimouna', '', '0878008474', NULL, 8, 2, 'assets/agent/maimounaNdiaye.jpg'),
-('tommaso.nicolazzo@example.com', 'password', 'Nicolazzo', 'Tommaso', '', '0962769532', NULL, 9, 2, 'assets/agent/tommasoNicolazzo.jpg'),
-('popop@gmail.com', '123456789', 'test', 'eliot', '23 rue du lac', '963597543', NULL, 10, 1, NULL);
+INSERT INTO `compte` (`email`, `password`, `nom`, `prenom`, `adresse`, `tel`, `photo`, `id`, `type`, `photoPath`,`cvPath`) VALUES
+('matteo.leon@edu.ece.fr', '123456789', 'leon', 'matteo', 'boulogne', '5678655789', NULL, 1, 1, NULL, NULL),
+('malik.hassanne@edu.ece.fr', '123456789', 'Hassanne', 'Malik', '45 rue clamart zoo', '0987654321', NULL, 2, 1, NULL, NULL),
+('gabrielguietdupre@gmail.com', '123456789', 'Guiet-Dupré', 'Gabriel', '37 rue des fleurs', '0768290664', 0x75706c6f6164732f49445f70686f746f2e6a7067, 3, 1, NULL, NULL),
+('shani.blumel@omnes.immobilier.com', 'password', 'Blumel', 'Shani', '', '0694230108', NULL, 4, 2, 'assets/agent/shaniBlumel.jpg','cv-agent-immobilier.png'),
+('mendy.furmansky@omnes.immobilier.com', 'password', 'Furmansky', 'Mendy', '', '0981325607', NULL, 5, 2, 'assets/agent/mendyFurmansky.jpg','cv-agent-immobilier.png'),
+('charlene.phung@omnes.immobilier.com', 'password', 'Phung', 'Charlene', '', '0897115587', NULL, 6, 2, 'assets/agent/charlenePhung.jpg','cv-agent-immobilier.png'),
+('maiky.nunez@omnes.immobilier.com', 'password', 'Nunez', 'Maiky', '', '0813265722', NULL, 7, 2, 'assets/agent/maikyNunez.jpg','cv-agent-immobilier.png'),
+('maimouna.ndiaye@omnes.immobilier.com', 'password', 'Ndiaye', 'Maimouna', '', '0878008474', NULL, 8, 2, 'assets/agent/maimounaNdiaye.jpg','cv-agent-immobilier.png'),
+('tommaso.nicolazzo@example.com', 'password', 'Nicolazzo', 'Tommaso', '', '0962769532', NULL, 9, 2, 'assets/agent/tommasoNicolazzo.jpg','cv-agent-immobilier.png'),
+('popop@gmail.com', '123456789', 'test', 'eliot', '23 rue du lac', '963597543', NULL, 10, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 

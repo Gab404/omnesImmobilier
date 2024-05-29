@@ -67,6 +67,7 @@ $conn->close();
     </style>
 </head>
 <body>
+    <center>
     <div class="container-fluid">
         <div class="row justify-content-center align-items-center vh-100">
             <div class="col-md-6">
@@ -98,5 +99,6 @@ $conn->close();
             </div>
         </div>
     </div>
+    </center>
 </body>
 </html>
