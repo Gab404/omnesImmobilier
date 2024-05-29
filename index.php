@@ -25,12 +25,7 @@ session_start();
             width: 100%;
             height: 400px;
         }
-        .TextPresentation {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%; 
-        }
+        
         .presentation {
             max-width: 600px;
             padding: 20px;
@@ -69,7 +64,7 @@ session_start();
     
     <header class="site-navbar" role="banner">
 
-      <div class="container">
+      <div class="container-fluid">
         <div class="row align-items-center">
           
           <div class="col-11 col-xl-2">

@@ -124,7 +124,7 @@ $result = $conn->query($sql);
     </div>
     
     <header class="site-navbar" role="banner">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-11 col-xl-2">
                     <h1 class="mb-0 site-logo"><a href="index.php" class="text-white mb-0">Omnes Immobilier</a></h1>
