@@ -196,10 +196,11 @@ $result = $conn->query($sql);
                         echo '        <div class="card-body d-flex flex-column">';
                         echo '            <div class="mt-auto text-center">';
                         echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
-                        echo '              <p class="card-text">' . $row["adresse"] . '</p>';
-                        echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
-                        echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
+                        // echo '              <p class="card-text">' . $row["adresse"] . '</p>';
+                        // echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
+                        // echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
                         echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
+                        echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Zoomer</a>';
                         echo '            </div>';
                         echo '        </div>';
                         echo '    </div>';
@@ -212,6 +213,31 @@ $result = $conn->query($sql);
             ?>
         </div>
     </div>
+
+    <!-- Modal pour afficher le bien immobilier -->
+    <center>
+    <div class="modal fade" id="immoModal" tabindex="-1" role="dialog" aria-labelledby="immoModalLabel" aria-hidden="true" style="z-index: 2000;">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="width: 70%;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="immoModalLabel">Immobilier</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="immoImage" src="" alt="immo" class="img-fluid" style = "width: 500px; height: 500px; object-fit: cover;">
+                    <br></br>
+                    <p id="adresse" class="card-text"></p>
+                    <p id="nbPiece" class="card-text"></p>
+                    <p id="nbChambre" class="card-text"></p>
+                    <p id="dimension" class="card-text"></p>
+                    <p id="prix" class="card-text"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </center>
 
     <footer class="footer">
         <div class="container-fluid">
@@ -244,7 +270,7 @@ $result = $conn->query($sql);
             </div>
         </div>
     </footer>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var successMessage = document.getElementById('notificationContainer');
@@ -262,26 +288,53 @@ $result = $conn->query($sql);
         searchImmobiliers(inputVal);
     });
 
-    function searchImmobiliers(inputVal) {
-    var searchInput = inputVal;
-    fetch('searchImmobilier.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: 'searchInput=' + encodeURIComponent(searchInput),
-    })
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('searchResult').innerHTML = data;
-    })
-    .catch(error => {
-        console.error('Erreur lors de la recherche:', error);
+    $(document).ready(function() {
+    console.log("Document is ready"); // Debug line
+
+    // Gestion des clics sur les boutons immo
+    $(document).on('click', '.btn-immo', function(event) {
+        event.preventDefault();
+        console.log("Button clicked"); // Debug line
+
+        var immoPath = $(this).data('immo');
+        var adresse = $(this).data('adresse');
+        var nbPiece = $(this).data('nbPiece');
+        var nbChambre = $(this).data('nbChambre');
+        var dimension = $(this).data('dimension');
+        var prix = $(this).data('prix');
+
+        console.log(immoPath, adresse, nbPiece, nbChambre, dimension, prix); // Debug line
+
+        $('#immoImage').attr('src', immoPath);
+        $('#adresse').text(adresse);
+        $('#nbPiece').text(nbPiece + ' pièces');
+        $('#nbChambre').text(nbChambre + ' chambres');
+        $('#dimension').text(dimension);
+        $('#prix').text('Prix: ' + prix + '€');
+        $('#immoModal').modal('show');
     });
-}
+});
 
+    function searchImmobiliers(inputVal) {
+        var searchInput = inputVal;
+        fetch('searchImmobilier.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'searchInput=' + encodeURIComponent(searchInput),
+        })
+        .then(response => response.text())
+        .then(data => {
+            // Handle the data returned from the server
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle any errors
+            console.error('Error:', error);
+        });
+    }
 </script>
-
 
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/popper.min.js"></script>
