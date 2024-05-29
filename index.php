@@ -17,6 +17,9 @@ session_start();
     <link rel="stylesheet" href="css/style.css">
     
     <style>
+      .carousel-text {
+        color: white;
+      }
         .footer {
             background-color: #f1f1f1;
             padding: 40px 0;
@@ -127,21 +130,21 @@ session_start();
         <img src="assets/villa.jpg" class="d-block w-100" alt="..." style="max-height: 500px;object-fit: cover;">
         <div class="carousel-caption d-none d-md-block">
           <h5>Villa de luxe</h5>
-          <p>Explorez nos villas de luxe avec piscine et vue imprenable sur la mer.</p>
+          <p class="carousel-text">Explorez nos villas de luxe avec piscine et vue imprenable sur la mer.</p>
         </div>
       </div>
       <div class="carousel-item">
         <img src="assets/immobilierCommercial.jpg" class="d-block w-100" alt="..." style="max-height: 500px;object-fit: cover;">
         <div class="carousel-caption d-none d-md-block">
           <h5>Immobilier Commercial</h5>
-          <p>Consultez nos larges offres d'immobilier commercial dans toute la France.</p>
+          <p class="carousel-text">Consultez nos larges offres d'immobilier commercial dans toute la France.</p>
         </div>
       </div>
       <div class="carousel-item">
         <img src="assets/appartement.jpg" class="d-block w-100" alt="..." style="max-height: 500px;object-fit: cover;">
         <div class="carousel-caption d-none d-md-block">
           <h5>Appartement moderne</h5>
-          <p>Découvrez notre sélection d'appartements modernes à vendre ou à louer.</p>
+          <p class="carousel-text">Découvrez notre sélection d'appartements modernes à vendre ou à louer.</p>
         </div>
       </div>
     </div>

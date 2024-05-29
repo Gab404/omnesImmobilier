@@ -14,10 +14,9 @@ if ($conn->connect_error) {
 
 $searchQuery = $_POST['searchQuery'];
 if ($searchQuery !== '') {
-    $sql = "SELECT email, nom, prenom, photoPath FROM compte WHERE type = 2 AND nom LIKE '$searchQuery%' or prenom LIKE '$searchQuery%'";
+    $sql = "SELECT email, nom, prenom, photoPath, cvPath FROM compte WHERE type = 2 AND (nom LIKE '$searchQuery%' OR prenom LIKE '$searchQuery%')";
 } else {
-    // Si l'input est vide, récupérer tous les comptes de type 2
-    $sql = "SELECT email, nom, prenom, photoPath FROM compte WHERE type = 2";
+    $sql = "SELECT email, nom, prenom, photoPath, cvPath FROM compte WHERE type = 2";
 }
 $result = $conn->query($sql);
 
@@ -30,11 +29,11 @@ if ($result->num_rows > 0) {
         echo '            <div class="mt-auto text-center">';
         echo '              <h5 class="card-title">' . $row["prenom"] . ' ' . $row["nom"] . '</h5>';
         echo '              <p class="card-text">' . $row["email"] . '</p>';
-        echo '              <a href="#" class="btn btn-primary btn-cv">CV</a>';
+        echo '              <a href="#" data-cv="' . addslashes($row["cvPath"]) . '" class="btn btn-primary btn-cv">CV</a>';
         echo '            </div>';
         echo '        </div>';
         echo '    </div>';
-        echo '</div>';                    
+        echo '</div>';                  
     }
 } else {
     echo '<div class="col-12"><p class="text-center" style="color: #007bff;">Aucun résultat trouvé.</p></div>';

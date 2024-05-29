@@ -52,6 +52,11 @@ $result = $conn->query($sql);
         .card img {
             transition: transform 0.5s ease;
         }
+        .card-img-top {
+            width: 100%; 
+            height: 250px;
+            object-fit: cover;
+        }
         .card:hover img {
             transform: scale(1.1);
         }
@@ -184,7 +189,7 @@ $result = $conn->query($sql);
     <!-- Modal pour afficher le CV -->
     <div class="modal fade" id="cvModal" tabindex="-1" role="dialog" aria-labelledby="cvModalLabel" aria-hidden="true" style="z-index: 2000;">
         <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
+            <div class="modal-content" style="width: 70%;">
                 <div class="modal-header">
                     <h5 class="modal-title" id="cvModalLabel">CV</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -231,6 +236,17 @@ $result = $conn->query($sql);
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('.btn-cv').forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    // Ajoutez ici le code que vous voulez exécuter lorsque le bouton est cliqué
+                    let cvPath = this.getAttribute('data-cv');
+                    console.log(cvPath); // Ceci est juste un exemple, vous pouvez le remplacer par votre propre code
+                });
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', function () {
             var successMessage = document.getElementById('notificationContainer');
             if (successMessage) {
@@ -277,6 +293,35 @@ $result = $conn->query($sql);
             });
         }
     </script>
+
+<script>
+        $(document).ready(function() {
+            // Gestion des clics sur les boutons CV
+            $(document).on('click', '.btn-cv', function(event) {
+                event.preventDefault();
+                var cvPath = $(this).data('cv');
+                cvPath = 'uploads/' + cvPath; // Modifier le chemin selon vos besoins
+                $('#cvImage').attr('src', cvPath);
+                $('#cvModal').modal('show');
+            });
+
+            // Recherche dynamique des agents
+            $('#searchInput').on('input', function() {
+                var searchQuery = $(this).val();
+                searchAgents(searchQuery);
+            });
+
+            function searchAgents(searchQuery) {
+                $.post('searchAgent.php', { searchQuery: searchQuery }, function(data) {
+                    $('#searchResult').html(data);
+                }).fail(function() {
+                    console.error('Erreur lors de la recherche.');
+                });
+            }
+        });
+    </script>
+
+
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
