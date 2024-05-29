@@ -24,22 +24,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adresse = $_POST['adresse'];
     $tel = $_POST['tel'];
 
-    // Requête SQL pour insérer un nouvel utilisateur
-    $sql = "INSERT INTO compte (email, password, prenom, nom, adresse, tel, type) VALUES ('$email', '$password', '$prenom', '$nom', '$adresse', '$tel', 1)";
+    // Requête SQL pour vérifier si l'email existe déjà
+    $sql = "SELECT * FROM compte WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($conn->query($sql) === TRUE) {
-        // Utilisateur inséré avec succès, rediriger vers une autre page par exemple
-        $_SESSION['account_created'] = true; // Indiquer que le compte a été créé avec succès
-        header("Location: index.php");
-        exit();
+    if ($result->num_rows > 0) {
+        // L'email existe déjà dans la base de données
+        $error_message = "L'email est déjà utilisé.";
     } else {
-        // Erreur lors de l'insertion, afficher un message d'erreur
-        $error_message = "Erreur lors de l'inscription. Veuillez réessayer.";
+        // L'email n'existe pas dans la base de données, vous pouvez continuer à insérer le nouvel utilisateur
+        $sql = "INSERT INTO compte (email, password, prenom, nom, adresse, tel, type) VALUES (?, ?, ?, ?, ?, ?, 1)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssss", $email, $password, $prenom, $nom, $adresse, $tel);
+
+        if ($stmt->execute()) {
+            // Utilisateur inséré avec succès, rediriger vers une autre page par exemple
+            $_SESSION['account_created'] = true; // Indiquer que le compte a été créé avec succès
+            header("Location: index.php");
+            exit();
+        } else {
+            // Erreur lors de l'insertion, afficher un message d'erreur
+            $error_message = "Erreur lors de l'inscription. Veuillez réessayer.";
+        }
     }
 }
 
 $conn->close();
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -116,5 +132,10 @@ $conn->close();
         </div>
     </div>
     </center>
+    <?php
+    if (isset($error_message)) {
+        echo '<div style="color: red;">' . $error_message . '</div>';
+    }
+    ?>
 </body>
 </html>
