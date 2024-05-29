@@ -9,6 +9,26 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 
+// Récupérer l'adresse e-mail de l'agent à partir de la requête GET
+if(isset($_GET['agentEmail'])) {
+    $agentEmail = $_GET['agentEmail'];
+} else {
+    // Gérer le cas où l'adresse e-mail de l'agent n'est pas fournie
+    // Par exemple, rediriger l'utilisateur vers une page d'erreur
+    header("Location: error.php");
+    exit();
+}
+
+// Récupérer l'adresse du bien immobilier à partir de la requête GET
+if(isset($_GET['propertyAddress'])) {
+    $propertyAddress = $_GET['propertyAddress'];
+} else {
+    // Gérer le cas où l'adresse du bien immobilier n'est pas fournie
+    // Par exemple, rediriger l'utilisateur vers une page d'erreur
+    header("Location: error.php");
+    exit();
+}
+
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -27,17 +47,22 @@ if ($conn->connect_error) {
 $clientEmail = $conn->real_escape_string($_SESSION['email']);
 
 // Requête SQL pour récupérer les événements du client connecté
-$sql = "SELECT p.*, c.photoPath 
+$sql = "SELECT p.*, c.photoPath, c.nom, c.prenom
         FROM planning p
         INNER JOIN compte c ON p.mailAgent = c.email
-        WHERE p.mailClient = '$clientEmail'";
+        WHERE p.mailAgent = '$agentEmail'";
 $result = $conn->query($sql);
 
 // Créer un tableau associatif pour stocker les événements
 $events = [];
+$agentNom = "";
+$agentPrenom = "";
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $events[$row['date']] = $row;
+        // Ajout des dates des rendez-vous à l'array $events
+        $events[] = $row['date'];
+        $agentNom = $row['nom'];
+        $agentPrenom = $row['prenom'];
     }
 }
 
@@ -45,6 +70,9 @@ if ($result->num_rows > 0) {
 $conn->close();
 ?>
 
+
+
+<!-- Le reste de votre code HTML/JavaScript reste inchangé -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -209,8 +237,8 @@ $conn->close();
                                     <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
                                 </ul>
                             </li>
-                            <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
-                            <li class="active"><a href="planning.php"><span>Rendez-Vous</span></a></li>
+                            <li class="active"><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
+                            <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
                             <?php
                             if(isset($_SESSION['email'])) {
                                 echo '<li><a href="myAccount.php"><span>Mon Compte</span></a></li>';
@@ -235,7 +263,7 @@ $conn->close();
         <img src="assets/Immobilier.jpg" class="hero-image" alt="Hero Image">
     </section>
 <div class="container-fluid text-center" style="width: 60%;">
-    <h1 class="my-4 text-center mb-3" style="color: black;">Mes rendez-vous</h1>
+    <h1 class="my-4 text-center mb-3" style="color: black;">Agenda de <?php echo htmlspecialchars($agentPrenom) . " " . htmlspecialchars($agentNom);?></h1>
     <div class="card p-4">
         <div class="change-month-btns">
             <button id="prevMonthBtn"><i class="fas fa-chevron-left"><</i></button>
@@ -270,26 +298,141 @@ $conn->close();
                     <p>Téléphone : +33 1 23 45 67 89</p>
                 </div>
                 <div class="col-md-4 mb-3">
-                    <p>Email : contact@omnesimmobilier.fr</p>
+                    <p>Email : info@omnesimmobilier.com</p>
                 </div>
-                <div class="col-md-4 mb-3">
-                    <div class="map-container">
-                        <iframe 
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.5364824916036!2d2.2896013156759247!3d48.84883177928647!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e671c6b24f2cd7%3A0x6f98e5e56b1d39c3!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1652874998836!5m2!1sen!2sus" 
-                            width="100%" 
-                            height="70%" 
-                            style="border:0;" 
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
-                    </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12 text-center">
+                    <p class="mb-0">&copy; <script>document.write(new Date().getFullYear());</script> Omnes Immobilier. All rights reserved.</p>
                 </div>
             </div>
         </div>
     </footer>
 
-<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const calendar = document.getElementById('calendar');
+    const events = <?php echo json_encode($events); ?>;
+    const calendarHeader = document.getElementById('calendarHeader');
+    const prevMonthBtn = document.getElementById('prevMonthBtn');
+    const nextMonthBtn = document.getElementById('nextMonthBtn');
+    const eventDetails = document.getElementById('eventDetails');
+    const eventDate = document.getElementById('eventDate');
+    const eventAdresse = document.getElementById('eventAdresse');
+    const eventDigicode = document.getElementById('eventDigicode');
+    const agentPhoto = document.getElementById('agentPhoto');
+
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    function renderCalendar(year, month) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDay = firstDay.getDay();
+        const monthName = firstDay.toLocaleString('default', { month: 'long' });
+
+        calendarHeader.textContent = `${monthName} ${year}`;
+
+        let html = `
+            <div class="calendar-days">
+                <div class="calendar-day">Sun</div>
+                <div class="calendar-day">Mon</div>
+                <div class="calendar-day">Tue</div>
+                <div class="calendar-day">Wed</div>
+                <div class="calendar-day">Thu</div>
+                <div class="calendar-day">Fri</div>
+                <div class="calendar-day">Sat</div>
+            </div>`;
+
+        let day = 1;
+        for (let i = 0; i < 42; i++) {
+            if (i < startingDay || day > daysInMonth) {
+                html += `<div class="calendar-day"></div>`;
+            } else {
+                const eventKey = `${year}-${month + 1 < 10 ? '0' : ''}${month + 1}-${day < 10 ? '0' : ''}${day}`;
+                const event = events[eventKey];
+                const isCurrentDay = (day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear());
+                const isPastDay = (day < new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear());
+                const dayClass = isCurrentDay ? 'current-day' : (isPastDay ? 'past-day' : '');
+                const eventClass = event ? 'has-event' : '';
+                html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.stringify(event || {})}'>${day}</div>`;
+                day++;
+            }
+        }
+
+        calendar.innerHTML = html;
+
+        const calendarDays = document.querySelectorAll('.calendar-day');
+        calendarDays.forEach(dayElement => {
+            dayElement.addEventListener('click', function() {
+                const event = JSON.parse(this.dataset.event);
+                if (event) {
+                    eventDate.textContent = `Date: ${event.date}`;
+                    eventAdresse.textContent = `Adresse: ${event.adresse}`;
+                    eventDigicode.textContent = `Digicode: ${event.digicode}`;
+                    agentPhoto.src = event.photoPath;
+                    if (typeof event.date === 'undefined') {
+                        eventDetails.style.display = 'none';
+                    } else {
+                        eventDetails.style.display = 'block';
+                    }
+                } else {
+                    eventDetails.style.display = 'none';
+                }
+            });
+        });
+    }
+
+    prevMonthBtn.addEventListener('click', function() {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        renderCalendar(currentYear, currentMonth);
+    });
+
+    nextMonthBtn.addEventListener('click', function() {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        renderCalendar(currentYear, currentMonth);
+    });
+
+    calendar.addEventListener('click', function(event) {
+        const clickedDay = event.target;
+
+        // Vérifier si la case cliquée est une journée valide du calendrier
+        if (clickedDay.classList.contains('calendar-day') && clickedDay.innerText !== '') {
+            const day = clickedDay.innerText.padStart(2, '0'); // Ajouter un zéro devant les jours de 1 à 9
+            const month = (currentMonth + 1).toString().padStart(2, '0'); // Ajouter un zéro devant les mois de 1 à 9
+            const year = currentYear;
+            const eventDate = `${year}-${month}-${day}`;
+
+            console.log(eventDate); // Pour vérifier la date cliquée dans la console
+
+            // Si la case n'a pas d'événement, rediriger vers createEvent.php
+            if (!clickedDay.classList.contains('has-event')) {
+                const agentEmail = '<?php echo $agentEmail; ?>';
+                const propertyAddress = '<?php echo $propertyAddress; ?>';
+                const url = `createEvent.php?date=${eventDate}&agentEmail=${agentEmail}&propertyAddress=${propertyAddress}`;
+
+                window.location.href = url;
+            }
+        }
+    });
+
+    // Initial rendering of the calendar
+    renderCalendar(currentYear, currentMonth);
+});
+
+</script>
+
+
+
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -352,7 +495,13 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 const eventKey = `${year}-${month + 1 < 10 ? '0' : ''}${month + 1}-${day < 10 ? '0' : ''}${day}`;
                 const eventData = <?php echo json_encode($events); ?>;
-                const event = eventData[eventKey];
+                let event = null;
+                for (let i = 0; i < eventData.length; i++) {
+                    if (eventData[i] === eventKey) {
+                        event = eventData[i];
+                        break;
+                    }
+                }
                 const isCurrentDay = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
                 const isPastDay = (day < today.getDate() && month === today.getMonth() && year === today.getFullYear());
                 const dayClass = isCurrentDay ? 'current-day' : (isPastDay ? 'past-day' : '');
