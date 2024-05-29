@@ -13,10 +13,9 @@ session_start();
     <link rel="stylesheet" href="css/owl.carousel.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css">
     
     <link rel="stylesheet" href="css/style.css">
-
+    
     <style>
         .footer {
             background-color: #f1f1f1;
@@ -52,6 +51,7 @@ session_start();
         }
         
     </style>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 
     <title>Omnes Immobilier - Home</title>
   </head>
@@ -161,11 +161,6 @@ session_start();
 </section>
     </br></br>
     </br></br>
-<<<<<<< HEAD
-    <section class="TextPresentation bg-light p-3 text-center">
-      <p>Bienvenue chez Omnes Immobilier, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</p>
-    </section>
-=======
     <div class="presentation">
         <h1>OmnesImmobilier : Votre Partenaire de Confiance en Immobilier</h1>
         <br></br>
@@ -191,7 +186,6 @@ session_start();
         <p><strong>OmnesImmobilier</strong><br>
         Votre avenir commence ici.</p>
     </div>
->>>>>>> 748461d2ba4644af02f6c0eae16791553e1a7453
     </br></br>
     </br></br>
 <footer class="footer">
