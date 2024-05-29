@@ -59,7 +59,7 @@ $conn->close();
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container-fluid">
         <div class="row justify-content-center align-items-center vh-100">
             <div class="col-md-6">
                 <div class="register-form">

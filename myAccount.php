@@ -44,10 +44,10 @@ session_start();
     </div>
     
     <header class="site-navbar" role="banner">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col-11 col-xl-2">
-                    <h1 class="mb-0 site-logo"><a href="index.php" class="text-white mb-0">Omnes Immobilier</a></h1>
+                    <h1 class="mb-0 ml-5 site-logo"><a href="index.php" class="text-white mb-0">Omnes Immobilier</a></h1>
                 </div>
                 <div class="col-12 col-md-10 d-none d-xl-block">
                     <nav class="site-navigation position-relative text-right" role="navigation">
@@ -90,7 +90,7 @@ session_start();
         <img src="assets/bgAccount.jpg" class="hero-image" alt="Hero Image">
     </section>
 
-    <div class="container mt-5">
+    <div class="container-fluid mt-5">
         <h1 class="my-4 text-center mb-5" style="color: #007bff;">
             Bonjour <span style="color: black;"><?php echo $_SESSION['prenom'] . ' ' . $_SESSION['nom']; ?></span>
         </h1>
@@ -155,7 +155,7 @@ function editField(field) {
 
 
     <footer class="footer">
-        <div class="container">
+        <div class="container-fluid">
             <div class="row text-center">
                 <div class="site-logo col-md-12 mb-3">
                     <h5 class="mb-0 site-logo" style="font-size: 160%;">Omnes Immobilier</h5>
