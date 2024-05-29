@@ -1,5 +1,41 @@
 <?php
 session_start();
+
+// Informations de connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "omnesimmobilier";
+
+// Création de la connexion
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Vérification de la connexion
+if ($conn->connect_error) {
+    die("Connexion échouée: " . $conn->connect_error);
+}
+
+// Vérifie si l'utilisateur est connecté
+if(isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];
+
+    // Récupérer les informations de l'utilisateur
+    $sql = "SELECT photo FROM compte WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->bind_result($photo);
+    $stmt->fetch();
+    $stmt->close();
+
+    // Vérification si la photo est récupérée
+    if ($photo) {
+        $imageData = base64_encode($photo);
+    } else {
+        $imageData = null;
+    }
+}
+$conn->close();
 ?>
 
 <!doctype html>
@@ -96,63 +132,57 @@ session_start();
         </h1>
 
         <div class="row align-items-center justify-content-center">
-    <div class="col-md-6">
-        <div class="text-center">
-            <?php
-            if (isset($_SESSION['photo']) && !empty($_SESSION['photo'])) {
-                echo '<img src="' . $_SESSION['photo'] . '" alt="Photo de profil" style="width: 120px; height: 120px; margin: 5% 0; border-radius: 50%; object-fit: cover;">';
-            } else {
-                echo '<img src="assets/photoAccount.jpg" alt="Photo de profil par défaut" style="max-width: 20%; margin: 5% 0;">';
-            }
-            ?>
-            <form id="uploadForm" action="upload.php" method="post" enctype="multipart/form-data" style="position: relative; display: inline-block;">
-                <input type="file" name="photo" accept="image/*" required onchange="document.getElementById('uploadForm').submit();" style="opacity: 0; position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
-                <button type="button" class="btn btn-primary" style="pointer-events: none; margin: 0 10%; font-size: 70%;">Modifier</button>
-            </form>
+            <div class="col-md-6">
+                <div class="text-center">
+                    <?php
+                    if ($imageData) {
+                        echo '<img src="data:image/jpeg;base64,' . $imageData . '" alt="Photo de profil" style="width: 120px; height: 120px; margin: 5% 0; border-radius: 50%; object-fit: cover;">';
+                    } else {
+                        echo '<img src="assets/photoAccount.jpg" alt="Photo de profil par défaut" style="max-width: 20%; margin: 5% 0;">';
+                    }
+                    ?>
+                    <form id="uploadForm" action="upload.php" method="post" enctype="multipart/form-data" style="position: relative; display: inline-block;">
+                        <input type="file" name="photo" accept="image/*" required onchange="document.getElementById('uploadForm').submit();" style="opacity: 0; position: absolute; left: 0; top: 0; width: 100%; height: 100%;">
+                        <button type="button" class="btn btn-primary" style="pointer-events: none; margin: 0 10%; font-size: 70%;">Modifier</button>
+                    </form>
 
-            <p><strong>Email :</strong> 
-                <span id="emailDisplay"><?php echo isset($_SESSION['email']) ? $_SESSION['email'] : 'Email non défini'; ?></span>
-                <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('email')">Modifier</button>
-                <form id="emailForm" action="upload.php" method="post" style="display: none; inline-block;">
-                    <input type="email" name="email" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" required>
-                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
-                </form>
-            </p>
+                    <p><strong>Email :</strong> 
+                        <span id="emailDisplay"><?php echo isset($_SESSION['email']) ? $_SESSION['email'] : 'Email non défini'; ?></span>
+                        <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('email')">Modifier</button>
+                        <form id="emailForm" action="upload.php" method="post" style="display: none; inline-block;">
+                            <input type="email" name="email" value="<?php echo isset($_SESSION['email']) ? $_SESSION['email'] : ''; ?>" required>
+                            <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                        </form>
+                    </p>
 
-            <p><strong>Adresse :</strong> 
-                <span id="adresseDisplay"><?php echo isset($_SESSION['adresse']) ? $_SESSION['adresse'] : 'Adresse non définie'; ?></span>
-                <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('adresse')">Modifier</button>
-                <form id="adresseForm" action="upload.php" method="post" style="display: none; inline-block;">
-                    <input type="text" name="adresse" value="<?php echo isset($_SESSION['adresse']) ? $_SESSION['adresse'] : ''; ?>" required>
-                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
-                </form>
-            </p>
+                    <p><strong>Adresse :</strong> 
+                        <span id="adresseDisplay"><?php echo isset($_SESSION['adresse']) ? $_SESSION['adresse'] : 'Adresse non définie'; ?></span>
+                        <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('adresse')">Modifier</button>
+                        <form id="adresseForm" action="upload.php" method="post" style="display: none; inline-block;">
+                            <input type="text" name="adresse" value="<?php echo isset($_SESSION['adresse']) ? $_SESSION['adresse'] : ''; ?>" required>
+                            <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                        </form>
+                    </p>
 
-            <p><strong>Téléphone :</strong> 
-                <span id="telDisplay"><?php echo isset($_SESSION['tel']) ? $_SESSION['tel'] : 'Téléphone non défini'; ?></span>
-                <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('tel')">Modifier</button>
-                <form id="telForm" action="upload.php" method="post" style="display: none; inline-block;">
-                    <input type="tel" name="tel" value="<?php echo isset($_SESSION['tel']) ? $_SESSION['tel'] : ''; ?>" required>
-                    <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
-                </form>
-            </p>
+                    <p><strong>Téléphone :</strong> 
+                        <span id="telDisplay"><?php echo isset($_SESSION['tel']) ? $_SESSION['tel'] : 'Téléphone non défini'; ?></span>
+                        <button type="button" class="btn btn-link btn-sm ml-auto" onclick="editField('tel')">Modifier</button>
+                        <form id="telForm" action="upload.php" method="post" style="display: none; inline-block;">
+                            <input type="tel" name="tel" value="<?php echo isset($_SESSION['tel']) ? $_SESSION['tel'] : ''; ?>" required>
+                            <button type="submit" class="btn btn-primary btn-sm">Enregistrer</button>
+                        </form>
+                    </p>
+                </div>
+            </div>
         </div>
+
+        <script>
+        function editField(field) {
+            document.getElementById(field + 'Display').style.display = 'none';
+            document.getElementById(field + 'Form').style.display = 'inline-block';
+        }
+        </script>
     </div>
-</div>
-
-<script>
-function editField(field) {
-    document.getElementById(field + 'Display').style.display = 'none';
-    document.getElementById(field + 'Form').style.display = 'inline-block';
-}
-</script>
-
-
-
-        </div>
-    </div>
-</div>
-
 
     <footer class="footer">
         <div class="container-fluid">
@@ -186,11 +216,10 @@ function editField(field) {
         </div>
     </footer>
 
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/popper.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/jquery.sticky.js"></script>
-<script src="js/main.js"></script>
-
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

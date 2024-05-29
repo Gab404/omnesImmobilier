@@ -25,49 +25,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $adresse = !empty($_POST['adresse']) ? $_POST['adresse'] : $_SESSION['adresse'];
     $tel = !empty($_POST['tel']) ? $_POST['tel'] : $_SESSION['tel'];
 
+    $photo = null;
     // Vérifie si un fichier image a été téléchargé
     if (!empty($_FILES["photo"]["name"])) {
-        // Dossier de destination pour les téléchargements
-        $target_dir = "uploads/";
-
-        // Assurez-vous que le dossier de destination existe, sinon créez-le
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0755, true);
-        }
-
-        // Chemin complet du fichier de destination
-        $target_file = $target_dir . basename($_FILES["photo"]["name"]);
-        $uploadOk = 1;
-        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
         // Vérifie si le fichier est une image réelle ou une fausse image
         $check = getimagesize($_FILES["photo"]["tmp_name"]);
         if ($check !== false) {
-            $uploadOk = 1;
+            // Lire le fichier image en tant que binaire
+            $photo = file_get_contents($_FILES["photo"]["tmp_name"]);
         } else {
-            $uploadOk = 0;
-        }
-
-        // Vérifie la taille du fichier (optionnel, par exemple, limite de 5MB)
-        if ($_FILES["photo"]["size"] > 5000000) {
-            $uploadOk = 0;
-        }
-
-        // Autorise certains formats de fichiers
-        if ($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg" && $imageFileType != "gif") {
-            $uploadOk = 0;
-        }
-
-        // Si tout est correct, essayez de télécharger le fichier
-        if ($uploadOk == 1 && move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file)) {
-            // Met à jour le chemin de la photo dans la session
-            $_SESSION['photo'] = $target_file;
+            echo "Le fichier n'est pas une image.";
         }
     }
-    $sql = "UPDATE compte SET email=?, adresse=?, tel=? WHERE id=?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $email, $adresse, $tel, $id_utilisateur);
 
+    // Prépare la requête SQL
+    if ($photo) {
+        $sql = "UPDATE compte SET email=?, adresse=?, tel=?, photo=? WHERE id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssssi", $email, $adresse, $tel, $photo, $id_utilisateur);
+    } else {
+        $sql = "UPDATE compte SET email=?, adresse=?, tel=? WHERE id=?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $email, $adresse, $tel, $id_utilisateur);
+    }
+
+    // Exécute la requête et vérifie le résultat
     if ($stmt->execute()) {
         // Met à jour les valeurs dans la session
         $_SESSION['email'] = $email;

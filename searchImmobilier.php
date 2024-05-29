@@ -60,14 +60,19 @@ if ($result->num_rows > 0) {
         echo '        <div class="card-body d-flex flex-column">';
         echo '            <div class="mt-auto text-center">';
         echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
-        echo '              <p class="card-text">' . $row["adresse"] . '</p>';
-        echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
-        echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
+        if ($row["type"] == "location") {
+            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / mois</b></p>';
+        } else if ($row["type"] == "terrain") {
+            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / m²</b></p>';
+        } else {
+            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€</b></p>';
+        }
         echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
+        echo '              <a href="#" data-immo="' . $row["photoPath"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
         echo '            </div>';
         echo '        </div>';
         echo '    </div>';
-        echo '</div>';                     
+        echo '</div>';        
     }
 } else {
     echo '<div class="col-12"><p class="text-center" style="color: #007bff;">Aucun résultat trouvé.</p></div>';

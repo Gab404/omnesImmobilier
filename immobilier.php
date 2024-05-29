@@ -80,7 +80,7 @@ $result = $conn->query($sql);
             left: 0;
             height: 100%;
             width: 100%;
-            background: rgba(0, 123, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
             color: white;
             opacity: 0;
             transition: opacity 0.5s ease;
@@ -198,9 +198,15 @@ $result = $conn->query($sql);
                         echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
                         // echo '              <p class="card-text">' . $row["adresse"] . '</p>';
                         // echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
-                        // echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€</p>';
+                        if ($row["type"] == "location") {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / mois</b></p>';
+                        } else if ($row["type"] == "terrain") {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / m²</b></p>';
+                        } else {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€</b></p>';
+                        }
                         echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
-                        echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Zoomer</a>';
+                        echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
                         echo '            </div>';
                         echo '        </div>';
                         echo '    </div>';
@@ -217,26 +223,30 @@ $result = $conn->query($sql);
     <!-- Modal pour afficher le bien immobilier -->
     <center>
     <div class="modal fade" id="immoModal" tabindex="-1" role="dialog" aria-labelledby="immoModalLabel" aria-hidden="true" style="z-index: 2000;">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content" style="width: 70%;">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="immoModalLabel">Immobilier</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body text-center">
-                    <img id="immoImage" src="" alt="immo" class="img-fluid" style = "width: 500px; height: 500px; object-fit: cover;">
-                    <br></br>
-                    <p id="adresse" class="card-text"></p>
-                    <p id="nbPiece" class="card-text"></p>
-                    <p id="nbChambre" class="card-text"></p>
-                    <p id="dimension" class="card-text"></p>
-                    <p id="prix" class="card-text"></p>
-                </div>
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="width: 70%;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="description"></h5>
+                <span id="immoID" style="display: none;"></span> <!-- ID du bien immobilier -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" style="text-align: left;">
+                <img id="immoImage" src="" alt="immo" class="img-fluid" style="border-radius: 0.5rem; width: 100%; height: 300px; object-fit: cover;">
+                <br><br>
+                <p id="adresse" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                <p id="nbPiece" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                <p id="nbChambre" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                <p id="dimension" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                <p id="prix" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
             </div>
         </div>
     </div>
+</div>
+
+
+
     </center>
 
     <footer class="footer">
@@ -294,46 +304,54 @@ $result = $conn->query($sql);
     // Gestion des clics sur les boutons immo
     $(document).on('click', '.btn-immo', function(event) {
         event.preventDefault();
-        console.log("Button clicked"); // Debug line
+        console.log( $(this).data()); // Debug line
 
         var immoPath = $(this).data('immo');
+        var description = $(this).data('description');
         var adresse = $(this).data('adresse');
-        var nbPiece = $(this).data('nbPiece');
-        var nbChambre = $(this).data('nbChambre');
+        var nbPiece = $(this).data('nbpiece');
+        var nbChambre = $(this).data('nbchambre');
         var dimension = $(this).data('dimension');
         var prix = $(this).data('prix');
-
-        console.log(immoPath, adresse, nbPiece, nbChambre, dimension, prix); // Debug line
+        var immoID = $(this).data('immoid'); // Nouvelle variable pour récupérer l'ID du bien immobilier
 
         $('#immoImage').attr('src', immoPath);
-        $('#adresse').text(adresse);
-        $('#nbPiece').text(nbPiece + ' pièces');
-        $('#nbChambre').text(nbChambre + ' chambres');
-        $('#dimension').text(dimension);
-        $('#prix').text('Prix: ' + prix + '€');
+        $('#description').html(description);
+        $('#adresse').html("<b style='font-size: 19px;'>Adresse: </b>" + adresse);
+        $('#nbPiece').html("<b style='font-size: 19px;'>Nombre de pièces: </b>"+ nbPiece);
+        $('#nbChambre').html("<b style='font-size: 19px;'>Nombres de chambres: </b>" + nbChambre);
+        $('#dimension').html("<b style='font-size: 19px;'>Dimension: </b>" + dimension + "m²");
+        $('#prix').html('<b style="font-size: 19px;">Prix: </b>' + prix + '€');
+
+        // Remplissage de l'ID du bien immobilier
+        $('#immoID').text(immoID);
+
         $('#immoModal').modal('show');
     });
 });
 
-    function searchImmobiliers(inputVal) {
-        var searchInput = inputVal;
-        fetch('searchImmobilier.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'searchInput=' + encodeURIComponent(searchInput),
-        })
-        .then(response => response.text())
-        .then(data => {
-            // Handle the data returned from the server
-            console.log(data);
-        })
-        .catch(error => {
-            // Handle any errors
-            console.error('Error:', error);
-        });
-    }
+function searchImmobiliers(inputVal) {
+    var searchInput = inputVal;
+    fetch('searchImmobilier.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'searchInput=' + encodeURIComponent(searchInput),
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Mise à jour du contenu dans le modal-body
+        var modalBody = document.querySelector('.modal-body');
+        modalBody.innerHTML = data;
+        $('#immoModal').modal('show'); // Affiche le modal après avoir mis à jour les données
+    })
+    .catch(error => {
+        // Gestion des erreurs
+        console.error('Error:', error);
+    });
+}
+
 </script>
 
 <script src="js/jquery-3.3.1.min.js"></script>
