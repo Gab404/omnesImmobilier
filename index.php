@@ -92,7 +92,7 @@ session_start();
                 <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
                 <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
                 <?php
-                  // Vérifiez si l'utilisateur est connecté
+                  // Vérifiez si l'utilisateur ou l'utilisatrice est connecté
                   if(isset($_SESSION['email'])) {
                       echo '<li><a href="myAccount.php"><span>Mon Compte</span></a></li>';
                       echo '<li><a href="logout.php"><span>Déconnexion</span></a></li>';
