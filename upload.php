@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['photo'] = $target_file;
         }
     }
-    $sql = "UPDATE client SET email=?, adresse=?, tel=? WHERE id=?";
+    $sql = "UPDATE compte SET email=?, adresse=?, tel=? WHERE id=?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("sssi", $email, $adresse, $tel, $id_utilisateur);
 
