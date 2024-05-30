@@ -259,7 +259,6 @@ $result = $conn->query($sql);
         $(document).ready(function() {
             $('.btn-cv').on('click', function() {
                 var cvPath = decodeURIComponent($(this).data('cv')); // Récupère le chemin du CV et décode les backslashes échappés
-                cvPath = 'uploads/' + cvPath; // Ajoute le chemin du dossier uploads
                 console.log(cvPath); // Vérifiez la valeur de cvPath
                 $('#cvImage').attr('src', cvPath); // Met à jour l'attribut src de l'image dans le modal
                 
@@ -300,7 +299,6 @@ $result = $conn->query($sql);
             $(document).on('click', '.btn-cv', function(event) {
                 event.preventDefault();
                 var cvPath = $(this).data('cv');
-                cvPath = 'uploads/' + cvPath; // Modifier le chemin selon vos besoins
                 $('#cvImage').attr('src', cvPath);
                 $('#cvModal').modal('show');
             });

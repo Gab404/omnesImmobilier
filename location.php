@@ -27,7 +27,8 @@ $sql = "
         i.dimension, 
         i.adresse, 
         i.type, 
-        i.prix
+        i.prix,
+        i.id
     FROM 
         immobilier i
     JOIN 
@@ -37,7 +38,6 @@ $sql = "
         AND i.type = 'location'
     ORDER BY 
         RAND()";
-
 $result = $conn->query($sql);
 ?>
 
@@ -82,7 +82,7 @@ $result = $conn->query($sql);
             left: 0;
             height: 100%;
             width: 100%;
-            background: rgba(0, 123, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
             color: white;
             opacity: 0;
             transition: opacity 0.5s ease;
@@ -135,17 +135,17 @@ $result = $conn->query($sql);
                     <nav class="site-navigation position-relative text-right" role="navigation">
                         <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                             <li><a href="index.php"><span>Home</span></a></li>
-                            <li class="has-children active">
+                            <li class="has-children">
                                 <a href="#"><span>Recherche</span></a>
                                 <ul class="dropdown arrow-top">
                                     <li><a href="agent.php">Agent</a></li>
                                     <li><a href="residentiel.php">Immobilier Résidentiel</a></li>
                                     <li><a href="terrain.php">Terrain</a></li>
-                                    <li class="active"><a href="location.php">Appartement à Louer</a></li>
+                                    <li><a href="location.php">Appartement à Louer</a></li>
                                     <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
                                 </ul>
                             </li>
-                            <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
+                            <li class="active"><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
                             <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
                             <?php
                             if(isset($_SESSION['email'])) {
@@ -176,11 +176,12 @@ $result = $conn->query($sql);
     <?php endif; ?>
 
     <section id="accueil" class="mt-0">
-        <img src="assets/bgLocation.jpg" class="hero-image" alt="Hero Image">
+        <img src="assets/Immobilier.jpg" class="hero-image" alt="Hero Image">
     </section>
 
+    <div id="planning">
     <div class="container-fluid mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Locations</h1>
+        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Biens Immobiliers</h1>
         <div class="container-fluid mt-3 text-center" style="width: 30%;">
             <div class="row">
                 <div class="col-md-12">
@@ -198,10 +199,15 @@ $result = $conn->query($sql);
                         echo '        <div class="card-body d-flex flex-column">';
                         echo '            <div class="mt-auto text-center">';
                         echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
-                        echo '              <p class="card-text">' . $row["adresse"] . '</p>';
-                        echo '              <p class="card-text">' . $row["nbPiece"] . ' pièces, ' . $row["nbChambre"] . ' chambres, ' . $row["dimension"] . '</p>';
-                        echo '              <p class="card-text">Prix: ' . number_format($row["prix"], 2) . '€ / mois</p>';
+                        if ($row["type"] == "location") {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / mois</b></p>';
+                        } else if ($row["type"] == "terrain") {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / m²</b></p>';
+                        } else {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€</b></p>';
+                        }
                         echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
+                        echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '"data-agentEmail="' . $row["agentEmail"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-description="' . $row["description"] . '" data-id="' . $row["id"] .'" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
                         echo '            </div>';
                         echo '        </div>';
                         echo '    </div>';
@@ -214,6 +220,39 @@ $result = $conn->query($sql);
             ?>
         </div>
     </div>
+
+    <!-- Modal pour afficher le bien immobilier -->
+    <center>
+    <div class="modal fade" id="immoModal" tabindex="-1" role="dialog" aria-labelledby="immoModalLabel" aria-hidden="true" style="z-index: 2000;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content" style="width: 70%;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="description"></h5>
+                <span id="immoID" style="display: none;"></span> <!-- ID du bien immobilier -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <img id="immoImage" src="" alt="immo" class="img-fluid" style="border-radius: 0.5rem; width: 100%; height: 300px; object-fit: cover;">
+                <br><br>
+                <div style="text-align: left;">
+                    <p id="adresse" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                    <p id="nbPiece" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                    <p id="nbChambre" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                    <p id="dimension" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                    <p id="prix" class="card-text ml-4" style="color: black; font-size: 18px; margin-bottom: 10px;"></p>
+                </div>
+                <button id="btn-get-planning" type="button" class="btn btn-primary btn-get-planning" data-agent-email="" data-property-address="">Prendre rendez-vous</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+            </div>
+
+    </center>
 
     <footer class="footer">
         <div class="container-fluid">
@@ -246,6 +285,23 @@ $result = $conn->query($sql);
             </div>
         </div>
     </footer>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+$(document).ready(function() {
+    $(document).on('click', '.btn-get-planning', function(event) {
+        event.preventDefault();
+
+        var agentEmail = $(this).data('agent-email');
+        var propertyAddress = $(this).data('property-address');
+
+        // Rediriger vers getPlanning.php avec les adresses e-mail de l'agent et du bien immobilier en tant que paramètres
+        window.location.href = 'getPlanning.php?agentEmail=' + agentEmail + '&propertyAddress=' + propertyAddress;
+    });
+});
+
+</script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -261,12 +317,45 @@ $result = $conn->query($sql);
 <script>
     document.getElementById("searchInput").addEventListener("input", function() {
         var inputVal = this.value;
-        searchLocations(inputVal);
+        searchImmobiliers(inputVal);
     });
 
-    function searchLocations(inputVal) {
+    $(document).ready(function() {
+
+    // Gestion des clics sur les boutons immo
+    $(document).on('click', '.btn-immo', function(event) {
+        event.preventDefault();
+
+        var immoPath = $(this).data('immo');
+        var agentEmail = $(this).data('agentemail');
+        var description = $(this).data('description');
+        var adresse = $(this).data('adresse');
+        var nbPiece = $(this).data('nbpiece');
+        var nbChambre = $(this).data('nbchambre');
+        var dimension = $(this).data('dimension');
+        var prix = $(this).data('prix');
+        var id = $(this).data('id'); // Nouvelle variable pour récupérer l'ID du bien immobilier
+
+        $('#immoImage').attr('src', immoPath);
+        $('#btn-get-planning').attr('data-agent-email', agentEmail);
+        $('#btn-get-planning').attr('data-property-address', adresse);
+        $('#description').html(description + "  #" + id);
+        $('#adresse').html("<b style='font-size: 19px;'>Adresse: </b>" + adresse);
+        $('#nbPiece').html("<b style='font-size: 19px;'>Nombre de pièces: </b>"+ nbPiece);
+        $('#nbChambre').html("<b style='font-size: 19px;'>Nombres de chambres: </b>" + nbChambre);
+        $('#dimension').html("<b style='font-size: 19px;'>Dimension: </b>" + dimension + "m²");
+        $('#prix').html('<b style="font-size: 19px;">Prix: </b>' + prix + '€');
+
+        // Remplissage de l'ID du bien immobilier
+        $('#immoID').text(immoID);
+
+        $('#immoModal').modal('show');
+    });
+});
+
+function searchImmobiliers(inputVal) {
     var searchInput = inputVal;
-    fetch('searchLocation.php', {
+    fetch('searchImmobilier.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -275,15 +364,18 @@ $result = $conn->query($sql);
     })
     .then(response => response.text())
     .then(data => {
-        document.getElementById('searchResult').innerHTML = data;
+        // Mise à jour du contenu dans le modal-body
+        var modalBody = document.querySelector('.modal-body');
+        modalBody.innerHTML = data;
+        $('#immoModal').modal('show'); // Affiche le modal après avoir mis à jour les données
     })
     .catch(error => {
-        console.error('Erreur lors de la recherche:', error);
+        // Gestion des erreurs
+        console.error('Error:', error);
     });
 }
 
 </script>
-
 
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/popper.min.js"></script>
