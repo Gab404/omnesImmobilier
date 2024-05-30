@@ -1,0 +1,18 @@
+Compte - Immobilier:
+
+Un Compte (agent) peut gérer plusieurs Immobiliers.
+Un Immobilier est géré par un seul Compte (agent).
+Cardinalité : 1 (Compte) à N (Immobilier)
+
+Compte - Planning:
+
+Un Compte (client) peut avoir plusieurs Plannings.
+Un Compte (agent) peut avoir plusieurs Plannings.
+Un Planning implique un seul Compte (client) et un seul Compte (agent).
+Cardinalité : N (Compte client) à N (Compte agent) via la table Planning.
+
+Immobilier - Planning:
+
+Un Immobilier peut être inclus dans plusieurs Plannings.
+Un Planning est associé à un seul Immobilier.
+Cardinalité : 1 (Immobilier) à N (Planning)
