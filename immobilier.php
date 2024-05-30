@@ -302,6 +302,28 @@ $result = $conn->query($sql);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
+        $(document).ready(function() {
+            $('#searchForm').on('submit', function(e) {
+                e.preventDefault();
+                var searchInput = $('#searchInput').val();
+
+                $.ajax({
+                    url: 'searchImmobilier.php',
+                    type: 'POST',
+                    data: { searchInput: searchInput },
+                    success: function(data) {
+                        $('#searchResult').html(data);
+                    },
+                    error: function() {
+                        alert('Erreur lors de la recherche.');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    <script>
 $(document).ready(function() {
     $(document).on('click', '.btn-get-planning', function(event) {
         event.preventDefault();
@@ -378,16 +400,16 @@ function searchImmobiliers(inputVal) {
     })
     .then(response => response.text())
     .then(data => {
-        // Mise à jour du contenu dans le modal-body
-        var modalBody = document.querySelector('.modal-body');
-        modalBody.innerHTML = data;
-        $('#immoModal').modal('show'); // Affiche le modal après avoir mis à jour les données
+        // Mise à jour du contenu dans l'élément avec l'ID 'searchResult'
+        var searchResult = document.getElementById('searchResult');
+        searchResult.innerHTML = data;
     })
     .catch(error => {
         // Gestion des erreurs
         console.error('Error:', error);
     });
 }
+
 
 </script>
 

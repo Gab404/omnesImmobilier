@@ -34,8 +34,7 @@ $sql = "
     JOIN 
         compte c ON i.agent = c.email
     WHERE
-        c.type = 2
-        AND i.type = 'terrain'
+        c.type = 2 AND i.type = 'terrain'
     ORDER BY 
         RAND()";
 $result = $conn->query($sql);
@@ -150,17 +149,17 @@ $result = $conn->query($sql);
                     <nav class="site-navigation position-relative text-right" role="navigation">
                         <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
                             <li><a href="index.php"><span>Home</span></a></li>
-                            <li class="has-children">
+                            <li class="has-children active">
                                 <a href="#"><span>Recherche</span></a>
                                 <ul class="dropdown arrow-top">
                                     <li><a href="agent.php">Agent</a></li>
                                     <li><a href="residentiel.php">Immobilier Résidentiel</a></li>
-                                    <li><a href="terrain.php">Terrain</a></li>
+                                    <li class="active"><a href="terrain.php">Terrain</a></li>
                                     <li><a href="location.php">Appartement à Louer</a></li>
                                     <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
                                 </ul>
                             </li>
-                            <li class="active"><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
+                            <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
                             <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
                             <?php
                             if(isset($_SESSION['email'])) {
@@ -303,6 +302,28 @@ $result = $conn->query($sql);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
+        $(document).ready(function() {
+            $('#searchForm').on('submit', function(e) {
+                e.preventDefault();
+                var searchInput = $('#searchInput').val();
+
+                $.ajax({
+                    url: 'searchTerrain.php',
+                    type: 'POST',
+                    data: { searchInput: searchInput },
+                    success: function(data) {
+                        $('#searchResult').html(data);
+                    },
+                    error: function() {
+                        alert('Erreur lors de la recherche.');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    <script>
 $(document).ready(function() {
     $(document).on('click', '.btn-get-planning', function(event) {
         event.preventDefault();
@@ -370,7 +391,7 @@ $(document).ready(function() {
 
 function searchImmobiliers(inputVal) {
     var searchInput = inputVal;
-    fetch('searchImmobilier.php', {
+    fetch('searchterrain.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -379,16 +400,16 @@ function searchImmobiliers(inputVal) {
     })
     .then(response => response.text())
     .then(data => {
-        // Mise à jour du contenu dans le modal-body
-        var modalBody = document.querySelector('.modal-body');
-        modalBody.innerHTML = data;
-        $('#immoModal').modal('show'); // Affiche le modal après avoir mis à jour les données
+        // Mise à jour du contenu dans l'élément avec l'ID 'searchResult'
+        var searchResult = document.getElementById('searchResult');
+        searchResult.innerHTML = data;
     })
     .catch(error => {
         // Gestion des erreurs
         console.error('Error:', error);
     });
 }
+
 
 </script>
 
