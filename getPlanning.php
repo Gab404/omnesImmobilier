@@ -43,14 +43,12 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Échapper les entrées utilisateur pour éviter les attaques par injection SQL
-$clientEmail = $conn->real_escape_string($_SESSION['email']);
 
-// Requête SQL pour récupérer les événements du client connecté
 $sql = "SELECT p.*, c.photoPath, c.nom, c.prenom
         FROM planning p
         INNER JOIN compte c ON p.mailAgent = c.email
         WHERE p.mailAgent = '$agentEmail'";
+
 $result = $conn->query($sql);
 
 // Créer un tableau associatif pour stocker les événements
@@ -61,6 +59,17 @@ if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         // Ajout des dates des rendez-vous à l'array $events
         $events[] = $row['date'];
+        $agentNom = $row['nom'];
+        $agentPrenom = $row['prenom'];
+    }
+} else {
+    $sql = "SELECT c.nom, c.prenom 
+        FROM compte c
+        WHERE c.email = '$agentEmail'";
+
+    $result = $conn->query($sql);
+    while ($row = $result->fetch_assoc()) {
+        // Ajout des dates des rendez-vous à l'array $events
         $agentNom = $row['nom'];
         $agentPrenom = $row['prenom'];
     }
@@ -205,6 +214,14 @@ $conn->close();
             height: 500px;
             object-fit: cover;
         }
+        .site-logo {
+          display: flex;
+          align-items: center;
+      }
+      .site-logo img {
+          max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
+          margin-right: 10px;
+      }
     </style>
 </head>
 <body>

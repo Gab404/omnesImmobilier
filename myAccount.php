@@ -66,6 +66,14 @@ $conn->close();
             height: 500px;
             object-fit: cover;
         }
+        .site-logo {
+          display: flex;
+          align-items: center;
+      }
+      .site-logo img {
+          max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
+          margin-right: 10px;
+      }
     </style>
     <title>Omnes Immobilier - Mon Compte</title>
 </head>

@@ -112,6 +112,14 @@ $result = $conn->query($sql);
             left: 5%;
             bottom: 5%;
         }
+        .site-logo {
+          display: flex;
+          align-items: center;
+      }
+      .site-logo img {
+          max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
+          margin-right: 10px;
+      }
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
