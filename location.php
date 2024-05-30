@@ -126,11 +126,18 @@ $result = $conn->query($sql);
     </div>
     
     <header class="site-navbar" role="banner">
-        <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-11 col-xl-2">
-                    <h1 class="mb-0 ml-5 site-logo"><a href="index.php" class="text-white mb-0">Omnes Immobilier</a></h1>
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-11 col-xl-2">
+            <h1 class="mb-0 site-logo">
+              <a href="index.php" class="text-white mb-0">
+                <img src="assets/logo.png" alt="Logo">
+                <div class="ml-5" style="position: absolute; top: 0%; left: 10%;  ">
+                  Omnes Immobilier
                 </div>
+              </a>
+            </h1>
+          </div>
                 <div class="col-12 col-md-10 d-none d-xl-block">
                     <nav class="site-navigation position-relative text-right" role="navigation">
                         <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
