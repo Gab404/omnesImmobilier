@@ -63,13 +63,35 @@ session_start();
     }
 
     #info-semaine .card {
-      flex: 1 0 auto;
-      display: flex;
-      flex-direction: column;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease-in-out;
+    }
+
+    #info-semaine .card:hover {
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 
     #info-semaine .card-body {
       flex-grow: 1;
+    }
+
+    #info-semaine .card-title {
+      font-size: 20px;
+      color: #333;
+    }
+
+    #info-semaine .card-text {
+        font-size: 16px;
+        color: #666;
+    }
+    #info-semaine .card-img-top {
+      width: 100%;
+      height: 200px; /* Ajustez cette valeur selon vos besoins */
+      object-fit: cover;
+      object-position: center;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
     }
     </style>
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -214,38 +236,40 @@ session_start();
     </div>
     <section id="info-semaine" class="mt-5">
     <div class="container">
-      <h2>Les informations de la Semaine</h2>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card mb-4">
-            <img src="assets/photo-de-groupe-entreprise-paris.jpg" class="card-img-top img-fluid" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">Rencontre avec les agents</h5>
-              <p class="card-text">Pendant une journée rencontrer les agents pour discuter des biens</p>
+        <h2 class="section-title text-center mb-5">Les Moments Forts de la Semaine</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card rounded-lg border-0 shadow">
+                    <img src="assets/photo-de-groupe-entreprise-paris.jpg" class="card-img-top" alt="Rencontre avec les agents">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Rencontre avec les Agents</h5>
+                        <p class="card-text">Rencontrez nos agents expérimentés pour discuter des nouvelles opportunités immobilières.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mb-4">
-            <img src="assets/rencontre-agent-immobilier-clients_23-2147797647.avif" class="card-img-top img-fluid" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">Visite des biens</h5>
-              <p class="card-text">Visitez des biens qui seront proposés durant une journée.</p>
+            <div class="col-md-4 mb-4">
+                <div class="card rounded-lg border-0 shadow">
+                    <img src="assets/rencontre-agent-immobilier-clients_23-2147797647.avif" class="card-img-top" alt="Visite des biens">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Visite des Biens</h5>
+                        <p class="card-text">Explorez une sélection exclusive de biens immobiliers disponibles lors de nos visites organisées.</p>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card mb-4">
-            <img src="assets/istockphoto-1497209453-612x612.jpg" class="card-img-top img-fluid" alt="...">
-            <div class="card-body">
-              <h5 class="card-title">Visite de l'agence</h5>
-              <p class="card-text">Visitez nos locaux et discuter avec le personnel pendant une journée.</p>
+            <div class="col-md-4 mb-4">
+                <div class="card rounded-lg border-0 shadow">
+                    <img src="assets/istockphoto-1497209453-612x612.jpg" class="card-img-top" alt="Visite de l'agence">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Visite de l'Agence</h5>
+                        <p class="card-text">Découvrez nos bureaux modernes et rencontrez notre équipe passionnée lors de nos journées portes ouvertes.</p>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </section>
+</section>
+
+
   
 
   <div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.5s linear;">
