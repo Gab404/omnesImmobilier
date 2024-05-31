@@ -1,26 +1,4 @@
 <?php
-// Démarrer la session pour récupérer la variable $_SESSION['email']
-session_start();
-
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['email'])) {
-    // Redirection vers la page d'accueil ou de connexion
-    header("Location: index.php");
-    exit();
-}
-
-// Vérifier si les données nécessaires ont été envoyées via GET
-if (!isset($_GET['date']) || !isset($_GET['agentEmail']) || !isset($_GET['propertyAddress'])) {
-    // Redirection vers la page d'erreur
-    header("Location: error.php");
-    exit();
-}
-
-// Récupérer les données envoyées via GET
-$date = $_GET['date'];
-$agentEmail = $_GET['agentEmail'];
-$propertyAddress = $_GET['propertyAddress'];
-
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -32,25 +10,43 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Vérifier la connexion
 if ($conn->connect_error) {
-    // Redirection vers la page d'erreur
-    header("Location: error.php");
-    exit();
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Échapper les entrées utilisateur pour éviter les attaques par injection SQL
-$clientEmail = $conn->real_escape_string($_SESSION['email']);
+// Récupérer la date et l'email de l'agent depuis GET
+$date = $_GET['date'];
+$agentEmail = $_GET['agentEmail'];
+$propertyAddress = $_GET['propertyAddress'];
 
-// Insérer un nouveau rendez-vous dans la table "planning"
-$sql = "INSERT INTO planning (mailClient, mailAgent, date, adresse) VALUES ('$clientEmail', '$agentEmail', '$date', '$propertyAddress')";
+// Préparer la plage horaire de 9h à 18h
+$startHour = 9;
+$endHour = 18;
 
-if ($conn->query($sql) === TRUE) {
-    // Redirection vers la page immobilier.php
-    header("Location: immobilier.php");
-    exit();
-} else {
-    // Redirection vers la page d'erreur
-    header("Location: error.php");
-    exit();
+// Récupérer les heures déjà prises pour cette date et cet agent
+// Récupérer les heures déjà prises pour cette date et cet agent
+$sql = "SELECT heure AS hour FROM planning WHERE mailAgent = '$agentEmail' AND DATE(date) = '$date'";
+$result = $conn->query($sql);
+
+
+
+$hoursTaken = array();
+if ($result->num_rows > 0) {
+    while($row = $result->fetch_assoc()) {
+        $hoursTaken[] = $row['hour'];
+    }
+}
+
+// Générer la liste des heures disponibles
+$availableHours = array();
+for ($hour = $startHour; $hour <= $endHour; $hour++) {
+    $formattedHour = sprintf("%02d:00", $hour); // Ajouter les minutes pour formater l'heure
+    if (!in_array($formattedHour . ':00', $hoursTaken)) {
+        $availableHours[] = $formattedHour; // Ajouter l'heure disponible
+    }
+}
+// Afficher les heures disponibles
+foreach ($availableHours as $hour) {
+    echo "<a href='request.php?date=$date&agentEmail=$agentEmail&propertyAddress=$propertyAddress&hour=$hour:00'>$hour:00</a><br>";
 }
 
 // Fermer la connexion à la base de données
