@@ -28,6 +28,37 @@ if(isset($_SESSION['email'])) {
     $stmt->fetch();
     $stmt->close();
 
+    // Requête SQL pour récupérer les données des biens immobiliers
+    $sql = "
+    SELECT 
+        c.photoPath AS agentPhoto,
+        c.email AS agentEmail,
+        i.photoPath AS immobilierPhoto, 
+        i.description, 
+        i.nbPiece, 
+        i.nbChambre, 
+        i.dimension, 
+        i.adresse, 
+        i.type, 
+        i.prix,
+        i.id,
+        f.id AS favorisId
+    FROM 
+        immobilier i
+    JOIN 
+        compte c ON i.agent = c.email
+    LEFT JOIN
+        favoris f ON i.id = f.idImmobilier AND f.mailClient = ?
+    WHERE
+        c.type = 2
+    ORDER BY 
+        RAND()";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email); // Remplacez $compte_email par l'email du compte actuel
+    $stmt->execute();
+    $result = $stmt->get_result();
+
     // Vérification si la photo est récupérée
     if ($photo) {
         $imageData = base64_encode($photo);
@@ -71,9 +102,30 @@ $conn->close();
           align-items: center;
       }
       .site-logo img {
-          max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
+          max-height: 50px; 
           margin-right: 10px;
       }
+      .property-card {
+            width: 30rem; 
+            margin: 0.5rem;
+        }
+
+        .property-image {
+            height: 200px; 
+            object-fit: cover; 
+        }
+
+        .property-title {
+            font-size: 1.2rem; 
+        }
+
+        .property-description {
+            font-size: 1rem; 
+        }
+
+        .property-price {
+            font-size: 0.9rem; 
+        }
     </style>
     <title>Omnes Immobilier - Mon Compte</title>
 </head>
@@ -190,6 +242,29 @@ $conn->close();
                 </div>
             </div>
         </div>
+
+        <?php
+        echo '<center>';
+        echo '<h2 class="my-4 text-center mb-5" style="color: #007bff;">Vos biens immobiliers favoris:</h2>';
+        echo '<div class="row">'; // Début du conteneur de grille
+        
+        while ($row = $result->fetch_assoc()) {
+            echo '<div class="col-md-4 ">'; // Chaque carte prend 4 colonnes sur un total de 12, donc 3 cartes par ligne
+            echo '<div class="card property-card tight-card">';
+            echo '<img src="' . $row['immobilierPhoto'] . '" class="card-img-top property-image" alt="Property image">';
+            echo '<div class="card-body">';
+            echo '<h5 class="card-title property-title">' . $row['adresse'] . '</h5>';
+            echo '<p class="card-text property-description">' . $row['nbPiece'] . ' pièces, ' . $row['nbChambre'] . ' chambres, ' . $row['dimension'] . ' m²</p>';
+            echo '<p class="card-text property-price"><small class="text-muted">' . number_format($row['prix'], 2) . ' €</small></p>';
+            echo '<a href="immobilier.php" class="btn btn-primary">Voir détails</a>';
+            echo '</div>';
+            echo '</div>';
+            echo '</div>'; // Fin de la colonne
+        }
+        
+        echo '</div>'; // Fin du conteneur de grille
+        echo '</center>';
+        ?>
 
         <script>
         function editField(field) {
