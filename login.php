@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } else {
         // Utilisateur non trouvé, afficher un message d'erreur
-        $error_message = "Identifiants incorrects. Veuillez réessayer.";
+        $error_message = "Identifiants incorrects. Veuillez réessayer ou s'inscrire via ce lien : <a href='signup.php' style='color: blue;'>Créez un compte</a>.";
     }
 }
 
@@ -88,6 +88,7 @@ $conn->close();
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-block">Se connecter</button>
                             </form>
+                            <p>Pas de compte ? <a href="signup.php" style="color: blue;">Inscivez-vous ici</a>.</p>
                             <?php
                             if(isset($error_message)) {
                                 echo '<div class="alert alert-danger mt-3" role="alert">' . $error_message . '</div>';

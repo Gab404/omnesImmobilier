@@ -1,5 +1,14 @@
 <?php
 session_start();
+// if (isset($_SESSION['email'])) {
+//     $email = $_SESSION['email'];
+//     echo "L'email du compte actuellement connecté est : " . $email;
+// } else {
+//     header('Location: login.php');
+//     exit();
+// }
+
+$compte_email = $_SESSION['email'];
 
 // Informations de connexion à la base de données
 $servername = "localhost";
@@ -28,17 +37,73 @@ $sql = "
         i.adresse, 
         i.type, 
         i.prix,
-        i.id
+        i.id,
+        f.id AS favorisId
     FROM 
         immobilier i
     JOIN 
         compte c ON i.agent = c.email
+    LEFT JOIN
+        favoris f ON i.id = f.idImmobilier AND f.mailClient = ?
     WHERE
         c.type = 2
     ORDER BY 
         RAND()";
-$result = $conn->query($sql);
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $compte_email); // Remplacez $compte_email par l'email du compte actuel
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $immoId = $_POST['immo_id'];
+    $favorisId = $_POST['favoris_id'];
+    $isFavoris = $_POST['is_favoris'];
+
+    if ($isFavoris) {
+        // Si l'immobilier est déjà en favoris, le supprimer
+        $sql = "DELETE FROM favoris WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $favorisId);
+        $stmt->execute();
+
+        echo 'removed';
+    } else {
+        // Sinon, ajouter l'immobilier aux favoris
+        $sql = "INSERT INTO favoris (mailClient, idImmobilier) VALUES (?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("si", $compte_email, $immoId);
+        $stmt->execute();
+
+        if ($stmt->error) {
+            echo "Erreur : " . $stmt->error;
+        } else {
+            echo 'added';
+        }
+    }
+}
 ?>
+
+<!-- <?php
+// Récupérez l'email du compte actuellement connecté
+$compte_email = $_SESSION['email'];
+
+// Créez une nouvelle requête SQL pour récupérer les favoris de l'utilisateur
+$sql_favoris = "SELECT * FROM favoris WHERE mailClient = '$compte_email'";
+
+// Exécutez la requête
+$result_favoris = $conn->query($sql_favoris);
+
+// Vérifiez si la requête a renvoyé des résultats
+if ($result_favoris->num_rows > 0) {
+    // Parcourez les résultats et affichez-les
+    while($row = $result_favoris->fetch_assoc()) {
+        echo "Id: " . $row["id"]. " - Email: " . $row["mailClient"]. " - Immobilier Id: " . $row["idImmobilier"]. "<br>";
+    }
+} else {
+    echo "Vous n'avez pas de favoris";
+}
+?> -->
 
 <!doctype html>
 <html lang="en">
@@ -48,6 +113,7 @@ $result = $conn->query($sql);
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -119,6 +185,12 @@ $result = $conn->query($sql);
           max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
           margin-right: 10px;
       }
+      .heart:hover {
+            color: red;
+        }
+        .heart.far:hover {
+            content: "\f004";
+        }
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
@@ -222,10 +294,25 @@ $result = $conn->query($sql);
                         }
                         echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
                         echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '"data-agentEmail="' . $row["agentEmail"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-description="' . $row["description"] . '" data-id="' . $row["id"] .'" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
+                        if ($row['favorisId']) {
+                            echo 'Dans les favoris';
+                            echo '<form action="remove_from_favoris.php" method="post" class="favoris-form">
+                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
+                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
+                                <button type="submit" class="heart fas fa-heart" style="color: red; position: absolute; bottom: 10px; right: 10px;"></button>
+                            </form>';
+                        } else {
+                            echo 'Dans les non favoris';
+                            echo '<form action="add_to_favoris.php" method="post" class="favoris-form">
+                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
+                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
+                                <button type="submit" class="heart far fa-heart" style="color: red; position: absolute; bottom: 10px; right: 10px;"></button>
+                            </form>';
+                        }
                         echo '            </div>';
                         echo '        </div>';
                         echo '    </div>';
-                        echo '</div>';                    
+                        echo '</div>';                  
                     }
                 } else {
                     echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
@@ -336,6 +423,18 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(function() {
+    $('.heart').hover(
+        function() { // Fonction exécutée lorsque la souris passe sur le cœur
+            $(this).removeClass('far').addClass('fas');
+        },
+        function() { // Fonction exécutée lorsque la souris quitte le cœur
+            if (!$(this).data('favoris-id')) {
+                $(this).removeClass('fas').addClass('far');
+            }
+        }
+    );
+});
 </script>
 
 
@@ -418,4 +517,5 @@ function searchImmobiliers(inputVal) {
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.sticky.js"></script>
 <script src="js/main.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 

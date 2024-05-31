@@ -120,6 +120,7 @@ $conn->close();
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-block">S'inscrire</button>
                             </form>
+                            <p>Vous avez déjà un compte ? <a href="login.php" style="color: blue;">Connectez-vous ici</a>.</p>
                             <?php
                             if(isset($error_message)) {
                                 echo '<div class="alert alert-danger mt-3" role="alert">' . $error_message . '</div>';
@@ -131,6 +132,7 @@ $conn->close();
             </div>
         </div>
     </div>
+
     </center>
     <?php
     if (isset($error_message)) {

@@ -145,6 +145,26 @@ INSERT INTO `planning` (`id`, `mailClient`, `mailAgent`, `date`, `adresse`, `dig
 (13, 'gabrielguietdupre@gmail.com', 'mendy.furmansky@omnes.immobilier.com', '2024-06-19', '1111 Rue des Lilas, Ville E', '');
 COMMIT;
 
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `favoris`
+--
+
+DROP TABLE IF EXISTS `favoris`;
+CREATE TABLE IF NOT EXISTS `favoris` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `mailClient` varchar(255) NOT NULL,
+  `idImmobilier` int NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `favoris`(`mailClient`, `idImmobilier`) VALUES
+('gabrielguietdupre@gmail.com', 1);
+
+
+
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
