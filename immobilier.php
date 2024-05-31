@@ -191,6 +191,28 @@ if ($result_favoris->num_rows > 0) {
         .heart.far:hover {
             content: "\f004";
         }
+
+        .favoris-btn {
+            background: none;
+            border: none;
+            color: white; /* Couleur par défaut */
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px 10px;
+            transition: color 0.3s;
+        }
+
+        .favoris-btn:hover {
+            color: #ff5252; /* Couleur au survol */
+        }
+
+        .favoris-btn.favorited {
+            color: #ff5252; /* Couleur pour les éléments favorisés */
+        }
+
+        .favoris-btn i {
+            margin-right: 5px;
+        }
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
@@ -295,19 +317,17 @@ if ($result_favoris->num_rows > 0) {
                         echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
                         echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '"data-agentEmail="' . $row["agentEmail"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-description="' . $row["description"] . '" data-id="' . $row["id"] .'" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
                         if ($row['favorisId']) {
-                            echo 'Dans les favoris';
-                            echo '<form action="remove_from_favoris.php" method="post" class="favoris-form">
-                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
-                                <button type="submit" class="heart fas fa-heart" style="color: red; position: absolute; bottom: 10px; right: 10px;"></button>
-                            </form>';
+                            echo '<form action="remove_from_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
+                                    <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
+                                    <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
+                                    <button type="submit" class="favoris-btn favorited"><i class="fas fa-heart" style="font-size: 150%;"></i></button>
+                                </form>';
                         } else {
-                            echo 'Dans les non favoris';
-                            echo '<form action="add_to_favoris.php" method="post" class="favoris-form">
-                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
-                                <button type="submit" class="heart far fa-heart" style="color: red; position: absolute; bottom: 10px; right: 10px;"></button>
-                            </form>';
+                            echo '<form action="add_to_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
+                                    <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
+                                    <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
+                                    <button type="submit" class="favoris-btn"><i class="far fa-heart" style="font-size: 150%;"></i></button>
+                                </form>';
                         }
                         echo '            </div>';
                         echo '        </div>';
