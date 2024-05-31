@@ -32,19 +32,6 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
-       
-       .custom-box {
-        border: 4px solid black; /* Couleur et épaisseur de la bordure */
-        padding: 20px; /* Ajustement de l'espacement à l'intérieur de la boîte */
-        background-color: #f8f9fa; /* Couleur de fond */
-        text-align: center; /* Centrer le texte horizontalement */
-        width: fit-content; /* Ajuster la largeur à la taille du contenu */
-        margin: 0 auto; /* Centrer horizontalement */
-        font-family: Arial, sans-serif; /* Changer la police */
-        color: black; /* Couleur du texte */
-        font-size: 40px; /* Taille de police plus grande */
-    }
-
         body {
             background-color: white;
         }
@@ -91,7 +78,7 @@ $result = $conn->query($sql);
             color: white;
         }
         .btn-cv {
-            width: 50%;
+            width: 40%;
         }
         .hero-image {
             width: 100%;
@@ -180,13 +167,8 @@ $result = $conn->query($sql);
         <img src="assets/bgAgent.jpg" class="hero-image" alt="Hero Image">
     </section>
 
-    <div class="container-fluid mt-5 text-center">
-    <div class="custom-box">
-        Nos Agents
-    </div>
-</div>
-
-
+    <div class="container-fluid mt-5">
+        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Agents</h1>
         <div class="container-fluid mt-3 text-center" style="width: 30%;">
             <div class="row">
                 <div class="col-md-12">
