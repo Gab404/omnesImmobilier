@@ -1,12 +1,12 @@
 <?php
 session_start();
-// if (isset($_SESSION['email'])) {
-//     $email = $_SESSION['email'];
-//     echo "L'email du compte actuellement connecté est : " . $email;
-// } else {
-//     header('Location: login.php');
-//     exit();
-// }
+if (isset($_SESSION['email'])) {
+    // $email = $_SESSION['email'];
+    // echo "L'email du compte actuellement connecté est : " . $email;
+} else {
+    header('Location: login.php');
+    exit();
+}
 
 $compte_email = $_SESSION['email'];
 
