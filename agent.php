@@ -78,7 +78,7 @@ $result = $conn->query($sql);
             color: white;
         }
         .btn-cv {
-            width: 40%;
+            width: 50%;
         }
         .hero-image {
             width: 100%;
