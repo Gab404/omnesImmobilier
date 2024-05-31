@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 }
 
 // Vérifie si l'utilisateur est connecté
-if(isset($_SESSION['email'])) {
+if (isset($_SESSION['email'])) {
     $email = $_SESSION['email'];
 
     // Récupérer les informations de l'utilisateur
@@ -50,12 +50,12 @@ if(isset($_SESSION['email'])) {
     LEFT JOIN
         favoris f ON i.id = f.idImmobilier AND f.mailClient = ?
     WHERE
-        c.type = 2
+        f.mailClient = ?
     ORDER BY 
         RAND()";
 
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $email); // Remplacez $compte_email par l'email du compte actuel
+    $stmt->bind_param("ss", $email, $email);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -146,7 +146,7 @@ $conn->close();
             <h1 class="mb-0 site-logo">
               <a href="index.php" class="text-white mb-0">
                 <img src="assets/logo.png" alt="Logo">
-                <div class="ml-5" style="position: absolute; top: 0%; left: 10%;  ">
+                <div class="ml-5" style="position: absolute; top: 0%; left: 10%;">
                   Omnes Immobilier
                 </div>
               </a>
@@ -169,7 +169,7 @@ $conn->close();
                             <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
                             <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
                             <?php
-                            if(isset($_SESSION['email'])) {
+                            if (isset($_SESSION['email'])) {
                                 echo '<li class="active"><a href="myAccount.php"><span>Mon Compte</span></a></li>';
                                 echo '<li><a href="logout.php"><span>Déconnexion</span></a></li>';
                             } else {
@@ -249,7 +249,7 @@ $conn->close();
         echo '<div class="row">'; // Début du conteneur de grille
         
         while ($row = $result->fetch_assoc()) {
-            echo '<div class="col-md-4 ">'; // Chaque carte prend 4 colonnes sur un total de 12, donc 3 cartes par ligne
+            echo '<div class="col-md-4">'; // Chaque carte prend 4 colonnes sur un total de 12, donc 3 cartes par ligne
             echo '<div class="card property-card tight-card">';
             echo '<img src="' . $row['immobilierPhoto'] . '" class="card-img-top property-image" alt="Property image">';
             echo '<div class="card-body">';
