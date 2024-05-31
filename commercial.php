@@ -190,12 +190,12 @@ $result = $conn->query($sql);
     <?php endif; ?>
 
     <section id="accueil" class="mt-0">
-        <img src="assets/Immobilier.jpg" class="hero-image" alt="Hero Image">
+        <img src="assets/bgCommercial.jpg" class="hero-image" alt="Hero Image">
     </section>
 
     <div id="planning">
     <div class="container-fluid mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Biens Immobiliers</h1>
+        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Entrepôts Commerciaux</h1>
         <div class="container-fluid mt-3 text-center" style="width: 30%;">
             <div class="row">
                 <div class="col-md-12">
