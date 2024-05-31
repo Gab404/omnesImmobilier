@@ -16,7 +16,7 @@ if ($conn->connect_error) {
 }
 
 // Requête SQL pour récupérer les données des agents
-$sql = "SELECT email, nom, prenom, photoPath, cvPath FROM compte WHERE type = 2";
+$sql = "SELECT email, nom, prenom, photoPath, cvPath, tel as telephone FROM compte WHERE type = 2";
 $result = $conn->query($sql);
 ?>
 
@@ -32,17 +32,17 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
-         .custom-box {
-        border: 4px solid black; /* Couleur et épaisseur de la bordure */
-        padding: 20px; /* Ajustement de l'espacement à l'intérieur de la boîte */
-        background-color: #f8f9fa; /* Couleur de fond */
-        text-align: center; /* Centrer le texte horizontalement */
-        width: fit-content; /* Ajuster la largeur à la taille du contenu */
-        margin: 0 auto; /* Centrer horizontalement */
-        font-family: Arial, sans-serif; /* Changer la police */
-        color: black; /* Couleur du texte */
-        font-size: 40px; /* Taille de police plus grande */
-    }
+        .custom-box {
+            border: 4px solid black;
+            padding: 20px;
+            background-color: #f8f9fa;
+            text-align: center;
+            width: fit-content;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+            color: black;
+            font-size: 40px;
+        }
         body {
             background-color: white;
         }
@@ -97,13 +97,13 @@ $result = $conn->query($sql);
             object-fit: cover;
         }
         .site-logo {
-          display: flex;
-          align-items: center;
-      }
-      .site-logo img {
-          max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
-          margin-right: 10px;
-      }
+            display: flex;
+            align-items: center;
+        }
+        .site-logo img {
+            max-height: 50px;
+            margin-right: 10px;
+        }
     </style>
     <title>Omnes Immobilier - Agents</title>
 </head>
@@ -124,47 +124,47 @@ $result = $conn->query($sql);
             <h1 class="mb-0 site-logo">
               <a href="index.php" class="text-white mb-0">
                 <img src="assets/logo.png" alt="Logo">
-                <div class="ml-5" style="position: absolute; top: 0%; left: 10%;  ">
+                <div class="ml-5" style="position: absolute; top: 0%; left: 10%;">
                   Omnes Immobilier
                 </div>
               </a>
             </h1>
           </div>
-                <div class="col-12 col-md-10 d-none d-xl-block">
-                    <nav class="site-navigation position-relative text-right" role="navigation">
-                        <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
-                            <li><a href="index.php"><span>Home</span></a></li>
-                            <li class="has-children active">
-                                <a href="#"><span>Recherche</span></a>
-                                <ul class="dropdown arrow-top">
-                                    <li class="active"><a href="agent.php">Agent</a></li>
-                                    <li><a href="residentiel.php">Immobilier Résidentiel</a></li>
-                                    <li><a href="terrain.php">Terrain</a></li>
-                                    <li><a href="location.php">Appartement à Louer</a></li>
-                                    <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
-                            <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
-                            <?php
-                            if(isset($_SESSION['email'])) {
-                                echo '<li><a href="myAccount.php"><span>Mon Compte</span></a></li>';
-                                echo '<li><a href="logout.php"><span>Déconnexion</span></a></li>';
-                            } else {
-                                echo '<li><a href="login.php"><span>Connexion</span></a></li>';
-                                echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
-                            }
-                            ?>
-                        </ul>
-                    </nav>
-                </div>
-                <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;">
-                    <a href="#" class="site-menu-toggle js-menu-toggle text-white">
-                        <span class="icon-menu h3"></span>
-                    </a>
-                </div>
-            </div>
+          <div class="col-12 col-md-10 d-none d-xl-block">
+            <nav class="site-navigation position-relative text-right" role="navigation">
+              <ul class="site-menu js-clone-nav mr-auto d-none d-lg-block">
+                <li><a href="index.php"><span>Home</span></a></li>
+                <li class="has-children active">
+                  <a href="#"><span>Recherche</span></a>
+                  <ul class="dropdown arrow-top">
+                    <li class="active"><a href="agent.php">Agent</a></li>
+                    <li><a href="residentiel.php">Immobilier Résidentiel</a></li>
+                    <li><a href="terrain.php">Terrain</a></li>
+                    <li><a href="location.php">Appartement à Louer</a></li>
+                    <li><a href="commercial.php">Entrepôts Commerciaux</a></li>
+                  </ul>
+                </li>
+                <li><a href="immobilier.php"><span>Tout Parcourir</span></a></li>
+                <li><a href="planning.php"><span>Rendez-Vous</span></a></li>
+                <?php
+                if(isset($_SESSION['email'])) {
+                    echo '<li><a href="myAccount.php"><span>Mon Compte</span></a></li>';
+                    echo '<li><a href="logout.php"><span>Déconnexion</span></a></li>';
+                } else {
+                    echo '<li><a href="login.php"><span>Connexion</span></a></li>';
+                    echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
+                }
+                ?>
+              </ul>
+            </nav>
+          </div>
+          <div class="d-inline-block d-xl-none ml-md-0 mr-auto py-3" style="position: relative; top: 3px;">
+            <a href="#" class="site-menu-toggle js-menu-toggle text-white">
+              <span class="icon-menu h3"></span>
+            </a>
+          </div>
         </div>
+      </div>
     </header>
 
     <?php if(isset($_SESSION['account_created'])): ?>
@@ -179,9 +179,9 @@ $result = $conn->query($sql);
     </section>
 
     <div class="container-fluid mt-5 text-center">
-    <div class="custom-box">
-        Nos Agents
-    </div>
+        <div class="custom-box">
+            Nos Agents
+        </div>
         <div class="container-fluid mt-3 text-center" style="width: 30%;">
             <div class="row">
                 <div class="col-md-12">
@@ -199,7 +199,8 @@ $result = $conn->query($sql);
                     echo '        <div class="card-body d-flex flex-column">';
                     echo '            <div class="mt-auto text-center">';
                     echo '              <h5 class="card-title">' . $row["prenom"] . ' ' . $row["nom"] . '</h5>';
-                    echo '              <p class="card-text">' . $row["email"] . '</p>';
+                    echo '              <p class="card-text">Email : ' . $row["email"] . '</p>';
+                    echo '              <p class="card-text">Téléphone : ' . $row["telephone"] . '</p>';
                     echo '              <a href="#" data-cv="' . addslashes($row["cvPath"]) . '" class="btn btn-primary btn-cv">CV</a>';
                     echo '            </div>';
                     echo '        </div>';
@@ -295,7 +296,6 @@ $result = $conn->query($sql);
             });
         });
 
-
         // Recherche dynamique des agents
         document.getElementById("searchInput").addEventListener("input", function() {
             var inputVal = this.value;
@@ -320,33 +320,6 @@ $result = $conn->query($sql);
             });
         }
     </script>
-
-<script>
-        $(document).ready(function() {
-            // Gestion des clics sur les boutons CV
-            $(document).on('click', '.btn-cv', function(event) {
-                event.preventDefault();
-                var cvPath = $(this).data('cv');
-                $('#cvImage').attr('src', cvPath);
-                $('#cvModal').modal('show');
-            });
-
-            // Recherche dynamique des agents
-            $('#searchInput').on('input', function() {
-                var searchQuery = $(this).val();
-                searchAgents(searchQuery);
-            });
-
-            function searchAgents(searchQuery) {
-                $.post('searchAgent.php', { searchQuery: searchQuery }, function(data) {
-                    $('#searchResult').html(data);
-                }).fail(function() {
-                    console.error('Erreur lors de la recherche.');
-                });
-            }
-        });
-    </script>
-
 
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
