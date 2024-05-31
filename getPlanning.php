@@ -439,13 +439,11 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(eventDate); // Pour vérifier la date cliquée dans la console
 
             // Si la case n'a pas d'événement, rediriger vers createEvent.php
-            if (!clickedDay.classList.contains('has-event')) {
-                const agentEmail = '<?php echo $agentEmail; ?>';
-                const propertyAddress = '<?php echo $propertyAddress; ?>';
-                const url = `createEvent.php?date=${eventDate}&agentEmail=${agentEmail}&propertyAddress=${propertyAddress}`;
+            const agentEmail = '<?php echo $agentEmail; ?>';
+            const propertyAddress = '<?php echo $propertyAddress; ?>';
+            const url = `createEvent.php?date=${eventDate}&agentEmail=${agentEmail}&propertyAddress=${propertyAddress}`;
 
-                window.location.href = url;
-            }
+            window.location.href = url;
         }
     });
 

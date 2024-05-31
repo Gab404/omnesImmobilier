@@ -27,7 +27,7 @@ if ($conn->connect_error) {
 $clientEmail = $conn->real_escape_string($_SESSION['email']);
 
 // Requête SQL pour récupérer les événements du client connecté
-$sql = "SELECT p.*, c.photoPath 
+$sql = "SELECT p.*, c.photoPath, TIME_FORMAT(p.heure, '%H:%i') as formatted_time
         FROM planning p
         INNER JOIN compte c ON p.mailAgent = c.email
         WHERE p.mailClient = '$clientEmail'";
@@ -37,9 +37,14 @@ $result = $conn->query($sql);
 $events = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
-        $events[$row['date']] = $row;
+        $row['heure'] = $row['formatted_time']; // Remplacer 'heure' par 'formatted_time'
+        // Ajouter la colonne photoPath à chaque objet event
+        $row['photoPath'] = $row['photoPath'];
+        $events[$row['date']][] = $row; // Utiliser la date comme clé et stocker tous les événements pour cette date
     }
 }
+
+
 
 // Fermer la connexion à la base de données
 $conn->close();
@@ -262,6 +267,7 @@ $conn->close();
             <h5>Détails du rendez-vous</h5>
             <img id="agentPhoto" src="" alt="Photo de l'agent" style="position: absolute; bottom: 15%; right: 10%; border-radius: 50%; object-fit: cover; width: 50px; height: 50px;">
             <p id="eventDate"></p>
+            <p id="eventTime"></p> <!-- Nouvel élément pour l'heure -->
             <p id="eventAdresse"></p>
             <p id="eventDigicode"></p>
             <form action="dropEvent.php" method="post">
@@ -269,6 +275,7 @@ $conn->close();
                 <button id="cancelEventBtn" class="btn btn-primary" style="font-size: 80%; margin: 10px 0;">Annuler le rendez-vous</button>
             </form>
         </div>
+
     </div>
 </div>  
 
@@ -305,6 +312,7 @@ $conn->close();
     </footer>
 
 <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
 <script>
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -404,27 +412,35 @@ html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.
 
         calendarDays.forEach(dayElement => {
     dayElement.addEventListener('click', function() {
-        const event = JSON.parse(this.dataset.event);
-        if (event) {
-            // Mettre à jour la valeur du champ caché avec l'ID de l'événement
-            document.getElementById('eventIdInput').value = event.id;
-            eventDate.textContent = `Date: ${event.date}`;
-            eventAdresse.textContent = `Adresse: ${event.adresse}`;
-            eventDigicode.textContent = `Digicode: ${event.digicode}`;
-            agentPhoto.src = event.photoPath;
-            if (typeof event.date === 'undefined') {
-                eventDetails.style.display = 'none';
-            } else {
-                eventDetails.style.display = 'block';
-            }
-        } else {
-            eventDetails.style.display = 'none';
-        }
+        const eventArray = JSON.parse(this.dataset.event);
+        if (eventArray && eventArray.length > 0) {
+    let eventDetailsHtml = '<h5>Détails des rendez-vous</h5>';
+    eventArray.forEach(event => {
+        eventDetailsHtml += `<img src="${event.photoPath}" alt="Photo de l'agent" style="border-radius: 50%; object-fit: cover; width: 50px; height: 50px;">`;
+        eventDetailsHtml += `<p>Date: ${event.date}</p>`;
+        eventDetailsHtml += `<p>Heure: ${event.heure}</p>`;
+        eventDetailsHtml += `<p>Adresse: ${event.adresse}</p>`;
+        eventDetailsHtml += `<p>Digicode: ${event.digicode}</p>`;
+        eventDetailsHtml += `
+            <form action="dropEvent.php" method="post">
+                <input type="hidden" name="event_id" value="${event.id}">
+                <button class="btn btn-primary" style="font-size: 80%; margin: 10px 0;">Annuler le rendez-vous</button>
+            </form>
+        `;
+        eventDetailsHtml += `<hr>`; // Ajout d'une ligne horizontale pour l'espacement
+    });
+    eventDetails.innerHTML = eventDetailsHtml;
+    eventDetails.style.display = 'block';
+} else {
+    eventDetails.style.display = 'none';
+}
     });
 });
+
     }
 });
 
 </script>
+
 </body>
 </html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 30 mai 2024 à 11:02
+-- Généré le : ven. 31 mai 2024 à 11:50
 -- Version du serveur : 8.2.0
 -- Version de PHP : 8.2.13
 
@@ -130,19 +130,20 @@ CREATE TABLE IF NOT EXISTS `planning` (
   `date` date NOT NULL,
   `adresse` varchar(255) NOT NULL,
   `digicode` varchar(255) NOT NULL,
+  `heure` time DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `planning`
 --
 
-INSERT INTO `planning` (`id`, `mailClient`, `mailAgent`, `date`, `adresse`, `digicode`) VALUES
-(4, 'gabrielguietdupre@gmail.com', 'maimouna.ndiaye@omnes.immobilier.com', '2024-06-01', '123 Rue de l\'exemple', '1234'),
-(11, 'gabrielguietdupre@gmail.com', 'tommaso.nicolazzo@example.com', '2024-07-01', 'Rue des Chênes, Village E', ''),
-(14, 'gabrielguietdupre@gmail.com', 'tommaso.nicolazzo@example.com', '2024-07-16', '1010 Rue des Fleurs, Ville D', ''),
-(10, 'gabrielguietdupre@gmail.com', 'mendy.furmansky@omnes.immobilier.com', '2024-06-01', 'Avenue des Platanes, Village D', ''),
-(13, 'gabrielguietdupre@gmail.com', 'mendy.furmansky@omnes.immobilier.com', '2024-06-19', '1111 Rue des Lilas, Ville E', '');
+INSERT INTO `planning` (`id`, `mailClient`, `mailAgent`, `date`, `adresse`, `digicode`, `heure`) VALUES
+(37, 'gabrielguietdupre@gmail.com', 'shani.blumel@omnes.immobilier.com', '2024-06-13', '1414 Boulevard des Ormes, Ville H', '', '12:00:00'),
+(38, 'gabrielguietdupre@gmail.com', 'mendy.furmansky@omnes.immobilier.com', '2024-05-31', 'Avenue des Platanes, Village D', '', '17:00:00'),
+(39, 'gabrielguietdupre@gmail.com', 'maimouna.ndiaye@omnes.immobilier.com', '2024-08-17', '11 Rue des Terrasses, Ville T', '', '17:00:00'),
+(35, 'gabrielguietdupre@gmail.com', 'tommaso.nicolazzo@example.com', '2024-10-08', '12 Chemin des Champs, Village U', '', '14:00:00'),
+(36, 'gabrielguietdupre@gmail.com', 'tommaso.nicolazzo@example.com', '2024-10-08', 'Rue des Chênes, Village E', '', '16:00:00');
 COMMIT;
 
 -- --------------------------------------------------------
