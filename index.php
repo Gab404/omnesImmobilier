@@ -49,9 +49,28 @@ session_start();
           align-items: center;
       }
       .site-logo img {
-          max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
+          max-height: 50px;
           margin-right: 10px;
       }
+      #info-semaine .row {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    #info-semaine .col-md-4 {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #info-semaine .card {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #info-semaine .card-body {
+      flex-grow: 1;
+    }
     </style>
     <link rel="stylesheet" href="css/bootstrap.min.css">
 
@@ -193,10 +212,53 @@ session_start();
         <p><strong>OmnesImmobilier</strong><br>
         Votre avenir commence ici.</p>
     </div>
-    <div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-      <div id="chatbot-messages" style="height: 90%; overflow: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin-bottom: 10px;"></div>
-      <input id="chatbot-input" type="text" style="width: 100%; padding: 5px; border: 1px solid #dee2e6; border-radius: 5px;" placeholder="Type your message here..." />
+    <section id="info-semaine" class="mt-5">
+    <div class="container">
+      <h2>Les informations de la Semaine</h2>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <img src="assets/photo-de-groupe-entreprise-paris.jpg" class="card-img-top img-fluid" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Rencontre avec les agents</h5>
+              <p class="card-text">Pendant une journée rencontrer les agents pour discuter des biens</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <img src="assets/rencontre-agent-immobilier-clients_23-2147797647.avif" class="card-img-top img-fluid" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Visite des biens</h5>
+              <p class="card-text">Visitez des biens qui seront proposés durant une journée.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <img src="assets/istockphoto-1497209453-612x612.jpg" class="card-img-top img-fluid" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">Visite de l'agence</h5>
+              <p class="card-text">Visitez nos locaux et discuter avec le personnel pendant une journée.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
+  
+
+  <div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.5s linear;">
+  <div id="chatbot-messages" style="height: 90%; overflow: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin-bottom: 10px;"></div>
+  <input id="chatbot-input" type="text" style="width: 100%; padding: 5px; border: 1px solid #dee2e6; border-radius: 5px;" placeholder="Type your message here..." />
+</div>
+
+<button id="chatbot-toggle" style="position: fixed; bottom: 10px; right: 10px; z-index: 1001; background-color: #007BFF; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; line-height: 50px; text-align: center;">&#8593;</button>
+
+
+
+    <br></br>
+    <br></br>
 
     <footer class="footer">
         <div class="container-fluid">
@@ -239,6 +301,22 @@ session_start();
             }, 3000);
         }
     });
+</script>
+
+<script>
+  document.getElementById('chatbot-toggle').addEventListener('click', function() {
+    var chatbot = document.getElementById('chatbot');
+    var toggleButton = document.getElementById('chatbot-toggle');
+    if (chatbot.style.opacity === '0') {
+      chatbot.style.opacity = '1';
+      chatbot.style.visibility = 'visible';
+      toggleButton.innerHTML = '&#8595;';
+    } else {
+      chatbot.style.opacity = '0';
+      chatbot.style.visibility = 'hidden';
+      toggleButton.innerHTML = '&#8593;';
+    }
+  });
 </script>
     <script src="js/chatbot.js"></script>
     <script src="js/jquery-3.3.1.min.js"></script>
