@@ -224,6 +224,29 @@ if ($result_favoris->num_rows > 0) {
         .favoris-btn i {
             margin-right: 5px;
         }
+        .btn-delete {
+            background-color: transparent;
+            border: none;
+            color: #ff0000; /* Rouge moderne pour attirer l'attention */
+            font-size: 1.5rem; /* Taille de la croix */
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            position: absolute;
+            left: 2%;
+            top: 1%;
+            font-size: 200%;
+        }
+
+        .btn-delete:hover {
+            color: #cc0000; /* Couleur de survol */
+        }
+
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
@@ -341,9 +364,11 @@ if ($result_favoris->num_rows > 0) {
                             </form>';
                     }
                     if ($compte_type == 3) {
-                        echo '<form action="delete_immobilier.php" method="post" onsubmit="return confirm(\'Êtes-vous sûr de vouloir supprimer cet immobilier ?\');">
+                        echo '<form action="delete_immobilier.php" method="post" onsubmit="return confirm(\'Êtes-vous sûr de vouloir supprimer cet immobilier ?\');" style="display:inline;">
                                 <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                <button type="submit" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.5rem;font-size: 0.875rem;line-height: 1.5;border-radius: 0.2rem;">Supprimer cette immobilier</button>
+                                <button type="submit" class="btn-delete">
+                                    &times;
+                                </button>
                               </form>';
                     }
                     echo '            </div>';
