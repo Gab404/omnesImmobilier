@@ -1,5 +1,10 @@
 <?php
 session_start();
+if (!isset($_SESSION['email'])) {
+    header('Location: login.php');
+    exit;
+}
+$email = $_SESSION['email'];
 
 // Informations de connexion à la base de données
 $servername = "localhost";
@@ -14,7 +19,13 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connexion échouée: " . $conn->connect_error);
 }
-
+$sql = "SELECT type FROM compte WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$stmt->bind_result($compte_type);
+$stmt->fetch();
+$stmt->close();
 // Requête SQL pour récupérer les données des biens immobiliers
 $sql = "
     SELECT 
@@ -180,6 +191,11 @@ $result = $conn->query($sql);
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
                             }
+                            if ($compte_type == '3') {
+                                echo '<li><a href="admin.php"><span>Admin</span></a></li>';
+                                }
+                                else {
+                                }
                             ?>
                         </ul>
                     </nav>

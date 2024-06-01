@@ -9,6 +9,8 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 
+$compte_email = $_SESSION['email'];
+
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -22,6 +24,16 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+ // Requête SQL pour récupérer le type de compte
+ $sql = "SELECT type FROM compte WHERE email = ?";
+ $stmt = $conn->prepare($sql);
+ $stmt->bind_param("s", $compte_email);
+ $stmt->execute();
+ $stmt->bind_result($compte_type);
+ $stmt->fetch();
+ $stmt->close();
+
 
 // Échapper les entrées utilisateur pour éviter les attaques par injection SQL
 $clientEmail = $conn->real_escape_string($_SESSION['email']);
@@ -239,6 +251,12 @@ $conn->close();
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
                             }
+                            if ($compte_type == '3') {
+                            echo '<li><a href="admin.php"><span>Admin</span></a></li>';
+                            }
+                            else {
+                            }
+                            
                             ?>
                         </ul>
                     </nav>
@@ -274,6 +292,9 @@ $conn->close();
                 <input type="hidden" name="event_id" id="eventIdInput">
                 <button id="cancelEventBtn" class="btn btn-primary" style="font-size: 80%; margin: 10px 0;">Annuler le rendez-vous</button>
             </form>
+        </div>
+        <div class="mt-5">
+        <a href="immobilier.php" class="btn btn-primary">Cliquez ici pour réserver</a>
         </div>
 
     </div>
