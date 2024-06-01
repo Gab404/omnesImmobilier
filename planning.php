@@ -251,12 +251,6 @@ $conn->close();
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
                             }
-                            if ($compte_type == '3') {
-                            echo '<li><a href="admin.php"><span>Admin</span></a></li>';
-                            }
-                            else {
-                            }
-                            
                             ?>
                         </ul>
                     </nav>

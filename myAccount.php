@@ -185,11 +185,6 @@ $conn->close();
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
                             }
-                            if ($compte_type == '3') {
-                            echo '<li><a href="admin.php"><span>Admin</span></a></li>';
-                            }
-                            else {
-                            }
                             ?>
                         </ul>
                     </nav>
@@ -259,7 +254,7 @@ $conn->close();
 
         <?php
         echo '<center>';
-        echo '<h2 class="my-4 text-center mb-5" style="color: #007bff;">Vos biens immobiliers favoris:</h2>';
+        echo '<hr style="width: 50%;"><h1 class="my-4 text-center mb-5" style="color: #007bff;"><span style="color: black;">Vos </span> Favoris</h1>';
         echo '<div class="row">'; // Début du conteneur de grille
         
         while ($row = $result->fetch_assoc()) {

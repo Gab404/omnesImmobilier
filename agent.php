@@ -169,11 +169,6 @@ $result = $conn->query($sql);
                     echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                     echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
                 }
-                if ($compte_type == '3') {
-                echo '<li><a href="admin.php"><span>Admin</span></a></li>';
-                }
-                else {
-                }
                 ?>
               </ul>
             </nav>
@@ -199,9 +194,9 @@ $result = $conn->query($sql);
     </section>
 
     <div class="container-fluid mt-5 text-center">
-        <div class="custom-box">
-            Nos Agents
-        </div>
+    <h1 class="my-4 text-center mb-5" style="color: #007bff;">
+    <span style="color: black;">Nos </span>Agents
+        </h1>
         <div class="container-fluid mt-3 text-center" style="width: 30%;">
             <div class="row">
                 <div class="col-md-12">
