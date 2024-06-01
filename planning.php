@@ -498,94 +498,80 @@ html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.
   });
 </script>
 <script>
-  var chatFlow = {
-  'Quel est ton nom ?': {
-    response: 'Je suis GitHub Copilot.',
+var chatbotMessages = document.getElementById('chatbot-messages');
+var chatFlow = {
+  "Peut tu chier ?": {
+    response: "Oui, je peux chier.",
     followUp: {
-      'Que fais-tu ?': {
-        response: 'Je suis conçu pour aider les développeurs à écrire du code plus rapidement et plus efficacement.',
-        followUp: {
-          'Peux-tu écrire du code pour moi ?': {
-            response: 'Oui, je peux générer du code en fonction de vos instructions.',
-            followUp: {
-              'Quels langages de programmation connais-tu ?': {
-                response: 'Je suis capable de générer du code pour une grande variété de langages de programmation, y compris JavaScript, Python, Java, C++, et bien d\'autres.',
-                followUp: null
-              }
-            }
-          }
-        }
+      "Nan jure ?": {
+        response: "Je jure que je peux chier."
+      },
+      "Je te crois pas": {
+        response: "La vie que je peux chier."
       }
     }
   },
-  'Comment ça va ?': {
-    response: 'Je suis un programme, donc je n\'ai pas d\'émotions, mais merci de demander.',
-    followUp: null
+  "Question 2": {
+    response: "Réponse 2"
   }
-  // Ajoutez d'autres questions et réponses ici
 };
+var currentChat = chatFlow;
 
-  var chatbotMessages = document.getElementById('chatbot-messages');
-  var currentChat = chatFlow; // Variable to keep track of the current state of the chat
+function displayMessage(message, className, boolQuestion) {
+  var messageDiv = document.createElement('div');
+  messageDiv.textContent = message;
+  messageDiv.className = className;
+  chatbotMessages.appendChild(messageDiv);
 
-  function displayMessage(message, className, boolQuestion) {
-    if (boolQuestion) {
-      var messageDiv = document.createElement('button');
-      messageDiv.textContent = message;
-      messageDiv.className = className;
-      chatbotMessages.appendChild(messageDiv);
-    } else {
-    var messageDiv = document.createElement('div');
-    messageDiv.textContent = message;
-    messageDiv.className = className;
-    chatbotMessages.appendChild(messageDiv);
+  if (!boolQuestion) {
+    var nextButton = document.createElement('button');
+    nextButton.textContent = 'Suivant';
+    nextButton.className = 'chatbot-question'; // Assign the same class as the question buttons
+    nextButton.style.padding = '5px 10px'; // Adjust the padding to make the button smaller
+    chatbotMessages.appendChild(nextButton);
+
+    nextButton.addEventListener('click', function() {
+      if (currentChat.followUp) {
+        displayQuestions(currentChat.followUp);
+        currentChat = currentChat.followUp;
+      } else {
+        displayQuestions(chatFlow);
+        currentChat = chatFlow;
+      }
+    });
   }
 }
 
-  function displayQuestions(questions) {
-    chatbotMessages.innerHTML = ''; // Clear the chatbot messages
-    for (var question in questions) {
-      displayMessage(question, 'chatbot-question',true);
-    }
+function displayQuestions(questions) {
+  chatbotMessages.innerHTML = ''; // Clear the chatbot messages
+  for (var question in questions) {
+    displayMessage(question, 'chatbot-question', true);
   }
-  function hideQuestions() {
+}
+
+function hideQuestions() {
   chatbotMessages.innerHTML = '';
 }
 
-  displayQuestions(currentChat); // Display the main questions at the beginning
+displayQuestions(currentChat); // Display the main questions at the beginning
 
-  // Add a click event listener to each question
-  chatbotMessages.addEventListener('click', function(e) {
+// Add a click event listener to each question
+chatbotMessages.addEventListener('click', function(e) {
   if (e.target && e.target.className === 'chatbot-question') {
     var question = e.target.textContent;
 
-    // displayMessage('You: ' + question, 'user-message');
-
     var response = currentChat[question].response;
     var followUp = currentChat[question].followUp;
+
+    // Update currentChat to the selected question
+    currentChat = currentChat[question];
 
     // Remove the user's question
     e.target.parentNode.removeChild(e.target);
 
     hideQuestions(); // Hide the questions after the user has clicked on one
 
-    displayMessage(response, 'chatbot-response',false);
-
-    // If the response has follow-up questions, add them to the conversation
-    if (followUp) {
-      setTimeout(function() {
-        currentChat = followUp; // Update the current state of the chat
-        chatbotMessages.innerHTML = ''; // Clear the chatbot messages
-        displayQuestions(currentChat);
-      }, 2000); // Wait for 2 seconds before displaying the follow-up questions
-    } else {
-      // Only reset the chat and display the main questions if the user has finished a conversation
-      currentChat = chatFlow; // Reset the current state of the chat
-      setTimeout(function() {
-        chatbotMessages.innerHTML = ''; // Clear the chatbot messages
-        displayQuestions(currentChat);
-      }, 2000); // Wait for 2 seconds before resetting the chat
-    }
+    displayMessage(response, 'chatbot-response', false);
   }
 });
 </script>
