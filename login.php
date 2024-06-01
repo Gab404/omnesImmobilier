@@ -36,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['tel'] = $row['tel'];
         $_SESSION['photo'] = $row['photo'];
         $_SESSION['id'] = $row['id'];
+        $_SESSION['rights'] = $row['type'];
         
         // Rediriger vers une autre page par exemple
         header("Location: index.php");

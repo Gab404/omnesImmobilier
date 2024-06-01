@@ -124,6 +124,7 @@ if ($result_favoris->num_rows > 0) {
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -297,11 +298,6 @@ if ($result_favoris->num_rows > 0) {
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
                             }
-                            if ($compte_type == '3') {
-                            echo '<li><a href="admin.php"><span>Admin</span></a></li>';
-                            }
-                            else {
-                            }
                             ?>
                         </ul>
                     </nav>
@@ -328,14 +324,24 @@ if ($result_favoris->num_rows > 0) {
 
     <div id="planning">
     <div class="container-fluid mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Biens Immobiliers</h1>
-        <div class="container-fluid mt-3 text-center" style="width: 30%;">
+    <h1 class="my-4 text-center mb-5" style="color: #007bff;">
+    <span style="color: black;">Nos </span>Biens <span style="color: black;">Immobiliers</span>
+        </h1>
+        <div class="container-fluid mt-3 text-center">
             <div class="row">
-                <div class="col-md-12">
-                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par adresse ou id">
+                <div class="col-md-6 d-flex justify-content-center align-items-center">
+                <?php if ($compte_type == 3): ?>
+                    <form action="addImmo.php" method="get" class="favoris-form">
+                        <button type="submit" class="btn btn-primary rounded-circle shadow" style="margin-top: -15px;">
+                            <i class="bi bi-plus" style="font-size: 150%;"></i>
+                        </button>
+                    </form>
+                <?php endif; ?>
+                    <input type="text" id="searchInput" class="form-control ml-3 mb-3" placeholder="Rechercher par adresse ou id">
                 </div>
             </div>
         </div>
+
         <div class="row" id="searchResult">
         <?php
             if ($result->num_rows > 0) {

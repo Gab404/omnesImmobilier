@@ -135,6 +135,7 @@ $conn->close();
         .property-price {
             font-size: 0.9rem; 
         }
+        
     </style>
     <title>Omnes Immobilier - Mon Compte</title>
 </head>
@@ -184,11 +185,6 @@ $conn->close();
                             } else {
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
-                            }
-                            if ($compte_type == '3') {
-                            echo '<li><a href="admin.php"><span>Admin</span></a></li>';
-                            }
-                            else {
                             }
                             ?>
                         </ul>
@@ -259,12 +255,12 @@ $conn->close();
 
         <?php
         echo '<center>';
-        echo '<h2 class="my-4 text-center mb-5" style="color: #007bff;">Vos biens immobiliers favoris:</h2>';
+        echo '<hr style="width: 50%;"><h1 class="my-4 text-center mb-5" style="color: #007bff;"><span style="color: black;">Vos </span> Favoris</h1>';
         echo '<div class="row">'; // Début du conteneur de grille
         
         while ($row = $result->fetch_assoc()) {
-            echo '<div class="col-md-4">'; // Chaque carte prend 4 colonnes sur un total de 12, donc 3 cartes par ligne
-            echo '<div class="card property-card tight-card">';
+            echo '<div class="col-md-4 mb-4">'; // Chaque carte prend 4 colonnes sur un total de 12, avec une marge inférieure de 4
+            echo '<div class="card shadow property-card" style="height: 100%;width: 90%;">'; // Ajout d'une ombre pour un aspect moderne et définir une hauteur fixe pour chaque carte
             echo '<img src="' . $row['immobilierPhoto'] . '" class="card-img-top property-image" alt="Property image">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title property-title">' . $row['adresse'] . '</h5>';
