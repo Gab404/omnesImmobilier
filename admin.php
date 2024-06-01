@@ -1,3 +1,4 @@
+// Path: admin.php
 <?php
 session_start();
  // Vérifiez si l'utilisateur ou l'utilisatrice est connecté
@@ -29,6 +30,39 @@ session_start();
 
   
 } else {
+}
+?>
+
+<?php
+$host = 'localhost'; // Remplacez par votre hôte
+$db   = 'omnesImmobilier'; // Remplacez par le nom de votre base de données
+$user = 'root'; // Remplacez par votre nom d'utilisateur
+$pass = ''; // Remplacez par votre mot de passe
+$charset = 'utf8mb4';
+
+$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+$opt = [
+    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   => false,
+];
+$pdo = new PDO($dsn, $user, $pass, $opt);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $photoPath = $_POST['photoPath'];
+    $description = $_POST['description'];
+    $nbPiece = $_POST['nbPiece'];
+    $nbChambre = $_POST['nbChambre'];
+    $dimension = $_POST['dimension'];
+    $adresse = $_POST['adresse'];
+    $pathVideo = $_POST['pathVideo'];
+    $type = $_POST['type'];
+    $prix = $_POST['prix'];
+    $agent = $_POST['agent'];
+
+    $sql = "INSERT INTO immobilier (photoPath, description, nbPiece, nbChambre, dimension, adresse, pathVideo, type, prix, agent) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt= $pdo->prepare($sql);
+    $stmt->execute([$photoPath, $description, $nbPiece, $nbChambre, $dimension, $adresse, $pathVideo, $type, $prix, $agent]);
 }
 ?>
 <!doctype html>
@@ -243,65 +277,54 @@ session_start();
 </section>
     </br></br>
     </br></br>
-    <div class="presentation">
-        <h1>OmnesImmobilier : Votre Partenaire de Confiance en Immobilier</h1>
-        <br></br>
-        <p>Bienvenue chez <strong>OmnesImmobilier</strong>, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</p>
-        
-        <div class="section-title">Notre Mission</div>
-        <p>Chez OmnesImmobilier, notre mission est simple : vous offrir un service personnalisé et de qualité pour répondre à toutes vos attentes. Nous nous engageons à vous fournir des solutions adaptées à vos besoins spécifiques, en mettant l'accent sur la transparence, la fiabilité et la satisfaction client.</p>
-        
-        <div class="section-title">Nos Services</div>
-        <p><strong>Achat et Vente</strong> : Que vous soyez à la recherche de votre résidence principale, d'une résidence secondaire ou d'un investissement locatif, nous vous aidons à trouver le bien idéal. Notre équipe d'experts vous accompagne également dans la vente de votre propriété, en vous proposant une estimation précise et en mettant en place des stratégies de marketing efficaces pour une vente rapide et au meilleur prix.</p>
-        <p><strong>Location</strong> : Nous vous aidons à trouver le locataire parfait pour votre bien ou à dénicher la location qui répond à tous vos critères. Grâce à notre réseau et notre expertise, nous assurons une gestion locative sans tracas.</p>
-        <p><strong>Gestion de Biens</strong> : Libérez-vous des contraintes de la gestion immobilière grâce à nos services complets de gestion de biens. Nous prenons en charge toutes les démarches administratives et techniques pour que vous puissiez profiter de vos investissements en toute sérénité.</p>
-        <p><strong>Conseil en Investissement</strong> : Bénéficiez de notre expertise pour optimiser vos investissements immobiliers. Nous vous guidons dans le choix des meilleurs placements et vous accompagnons dans leur gestion pour maximiser votre rentabilité.</p>
-        
-        <div class="section-title">Nos Valeurs</div>
-        <p><strong>Professionnalisme</strong> : Notre équipe est composée de professionnels passionnés et expérimentés, dédiés à vous offrir un service irréprochable.</p>
-        <p><strong>Écoute et Proximité</strong> : Nous privilégions une relation de proximité avec nos clients, basée sur l'écoute et la compréhension de vos besoins.</p>
-        <p><strong>Innovation</strong> : Toujours à l'affût des dernières tendances et technologies, nous utilisons des outils modernes pour optimiser nos services et vous offrir une expérience client exceptionnelle.</p>
-        
-        <div class="section-title">Contactez-nous</div>
-        <p>N'attendez plus pour concrétiser vos projets immobiliers ! Contactez-nous dès aujourd'hui pour discuter de vos besoins et découvrir comment nous pouvons vous aider à réaliser vos ambitions.</p>
-        
-        <p><strong>OmnesImmobilier</strong><br>
-        Votre avenir commence ici.</p>
-    </div>
-    <section id="info-semaine" class="mt-5">
-    <div class="container">
-        <h2 class="section-title text-center mb-5">Les Moments Forts de la Semaine</h2>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card rounded-lg border-0 shadow">
-                    <img src="assets/photo-de-groupe-entreprise-paris.jpg" class="card-img-top" alt="Rencontre avec les agents">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">Rencontre avec les Agents</h5>
-                        <p class="card-text">Rencontrez nos agents expérimentés pour discuter des nouvelles opportunités immobilières.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card rounded-lg border-0 shadow">
-                    <img src="assets/rencontre-agent-immobilier-clients_23-2147797647.avif" class="card-img-top" alt="Visite des biens">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">Visite des Biens</h5>
-                        <p class="card-text">Explorez une sélection exclusive de biens immobiliers disponibles lors de nos visites organisées.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card rounded-lg border-0 shadow">
-                    <img src="assets/istockphoto-1497209453-612x612.jpg" class="card-img-top" alt="Visite de l'agence">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">Visite de l'Agence</h5>
-                        <p class="card-text">Découvrez nos bureaux modernes et rencontrez notre équipe passionnée lors de nos journées portes ouvertes.</p>
-                    </div>
-                </div>
-            </div>
+
+    <div class="container mt-5">
+    <h1>Rajouter un bien immobilier:</h1>
+
+    <form method="post" action="" class="mt-4">
+        <div class="form-group">
+            <label for="photoPath">Photo Path:</label>
+            <input type="text" class="form-control" id="photoPath" name="photoPath">
         </div>
-    </div>
-</section>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <input type="text" class="form-control" id="description" name="description">
+        </div>
+        <div class="form-group">
+            <label for="nbPiece">Number of Rooms:</label>
+            <input type="number" class="form-control" id="nbPiece" name="nbPiece">
+        </div>
+        <div class="form-group">
+            <label for="nbChambre">Number of Bedrooms:</label>
+            <input type="number" class="form-control" id="nbChambre" name="nbChambre">
+        </div>
+        <div class="form-group">
+            <label for="dimension">Dimension:</label>
+            <input type="number" class="form-control" id="dimension" name="dimension">
+        </div>
+        <div class="form-group">
+            <label for="adresse">Address:</label>
+            <input type="text" class="form-control" id="adresse" name="adresse">
+        </div>
+        <div class="form-group">
+            <label for="pathVideo">Video Path:</label>
+            <input type="text" class="form-control" id="pathVideo" name="pathVideo">
+        </div>
+        <div class="form-group">
+            <label for="type">Type:</label>
+            <input type="text" class="form-control" id="type" name="type">
+        </div>
+        <div class="form-group">
+            <label for="prix">Price:</label>
+            <input type="number" class="form-control" id="prix" name="prix">
+        </div>
+        <div class="form-group">
+            <label for="agent">Agent:</label>
+            <input type="text" class="form-control" id="agent" name="agent">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
 
 
   
