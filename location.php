@@ -52,6 +52,18 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
+         .custom-box {
+            border: 4px solid black;
+            padding: 20px;
+            background-color: #f8f9fa;
+            text-align: center;
+            width: fit-content;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+            color: black;
+            font-size: 40px;
+        }
+    
         body {
             background-color: white;
         }
@@ -194,8 +206,10 @@ $result = $conn->query($sql);
     </section>
 
     <div id="planning">
-    <div class="container-fluid mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Locations</h1>
+    <div class="container-fluid mt-5 text-center">
+        <div class="custom-box">
+            Nos Locations
+        </div>
         <div class="container-fluid mt-3 text-center" style="width: 30%;">
             <div class="row">
                 <div class="col-md-12">
