@@ -259,8 +259,8 @@ $conn->close();
         echo '<div class="row">'; // Début du conteneur de grille
         
         while ($row = $result->fetch_assoc()) {
-            echo '<div class="col-md-4">'; // Chaque carte prend 4 colonnes sur un total de 12, donc 3 cartes par ligne
-            echo '<div class="card property-card tight-card">';
+            echo '<div class="col-md-4 mb-4">'; // Chaque carte prend 4 colonnes sur un total de 12, avec une marge inférieure de 4
+            echo '<div class="card shadow property-card" style="height: 100%;width: 90%;">'; // Ajout d'une ombre pour un aspect moderne et définir une hauteur fixe pour chaque carte
             echo '<img src="' . $row['immobilierPhoto'] . '" class="card-img-top property-image" alt="Property image">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title property-title">' . $row['adresse'] . '</h5>';
