@@ -135,6 +135,7 @@ $conn->close();
         .property-price {
             font-size: 0.9rem; 
         }
+        
     </style>
     <title>Omnes Immobilier - Mon Compte</title>
 </head>
