@@ -1,15 +1,5 @@
 <?php
 session_start();
-if (isset($_SESSION['email'])) {
-    // $email = $_SESSION['email'];
-    // echo "L'email du compte actuellement connecté est : " . $email;
-} else {
-    header('Location: login.php');
-    exit();
-}
-
-$compte_email = $_SESSION['email'];
-
 
 // Informations de connexion à la base de données
 $servername = "localhost";
@@ -20,20 +10,13 @@ $dbname = "omnesimmobilier";
 // Création de la connexion
 $conn = new mysqli($servername, $username, $password, $dbname);
 
+$compte_type = $_SESSION['rights'];
+
+
 // Vérification de la connexion
 if ($conn->connect_error) {
     die("Connexion échouée: " . $conn->connect_error);
 }
-
-// Requête SQL pour récupérer le type de compte
-$sql = "SELECT type FROM compte WHERE email = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $compte_email);
-$stmt->execute();
-$stmt->bind_result($compte_type);
-$stmt->fetch();
-$stmt->close();
-
 
 // Requête SQL pour récupérer les données des biens immobiliers
 $sql = "
@@ -297,6 +280,9 @@ if ($result_favoris->num_rows > 0) {
                             } else {
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
+                            }
+                            if ($compte_type == 3) {
+                                echo '<li><a href="admin.php"><span>Admin</span></a></li>';
                             }
                             ?>
                         </ul>

@@ -1,5 +1,10 @@
 <?php
 session_start();
+if(!isset($_SESSION['email'])) {
+    header('Location: login.php');
+    exit();
+}
+$email = $_SESSION['email'];
 
 // Informations de connexion à la base de données
 $servername = "localhost";
@@ -18,6 +23,16 @@ if ($conn->connect_error) {
 // Requête SQL pour récupérer les données des agents
 $sql = "SELECT email, nom, prenom, photoPath, cvPath, tel as telephone FROM compte WHERE type = 2";
 $result = $conn->query($sql);
+
+ // Requête SQL pour récupérer le type de compte
+ $sql = "SELECT type FROM compte WHERE email = ?";
+ $stmt = $conn->prepare($sql);
+ $stmt->bind_param("s", $email);
+ $stmt->execute();
+ $stmt->bind_result($compte_type);
+ $stmt->fetch();
+ $stmt->close();
+
 ?>
 
 <!doctype html>
@@ -153,6 +168,11 @@ $result = $conn->query($sql);
                 } else {
                     echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                     echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
+                }
+                if ($compte_type == '3') {
+                echo '<li><a href="admin.php"><span>Admin</span></a></li>';
+                }
+                else {
                 }
                 ?>
               </ul>

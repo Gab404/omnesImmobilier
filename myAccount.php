@@ -28,6 +28,15 @@ if (isset($_SESSION['email'])) {
     $stmt->fetch();
     $stmt->close();
 
+     // Requête SQL pour récupérer le type de compte
+    $sql = "SELECT type FROM compte WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->bind_result($compte_type);
+    $stmt->fetch();
+    $stmt->close();
+
     // Requête SQL pour récupérer les données des biens immobiliers
     $sql = "
     SELECT 
@@ -175,6 +184,11 @@ $conn->close();
                             } else {
                                 echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                                 echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
+                            }
+                            if ($compte_type == '3') {
+                            echo '<li><a href="admin.php"><span>Admin</span></a></li>';
+                            }
+                            else {
                             }
                             ?>
                         </ul>

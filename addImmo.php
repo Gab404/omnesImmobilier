@@ -1,4 +1,3 @@
-// Path: admin.php
 <?php
 session_start();
  // Vérifiez si l'utilisateur ou l'utilisatrice est connecté
