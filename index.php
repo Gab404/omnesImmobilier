@@ -1,7 +1,36 @@
 <?php
 session_start();
-?>
+ // Vérifiez si l'utilisateur ou l'utilisatrice est connecté
+ if(isset($_SESSION['email'])) {
 
+  $servername = "localhost";
+  $username = "root";
+  $password = "";
+  $dbname = "omnesimmobilier";
+
+  $compte_email = $_SESSION['email'];
+
+  // Création de la connexion
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Vérification de la connexion
+  if ($conn->connect_error) {
+      die("Connexion échouée: " . $conn->connect_error);
+  }
+
+  // Requête SQL pour récupérer le type de compte
+  $sql = "SELECT type FROM compte WHERE email = ?";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("s", $compte_email);
+  $stmt->execute();
+  $stmt->bind_result($compte_type);
+  $stmt->fetch();
+  $stmt->close();
+
+  
+} else {
+}
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -145,6 +174,11 @@ session_start();
                   if(isset($_SESSION['email'])) {
                       echo '<li><a href="myAccount.php"><span>Mon Compte</span></a></li>';
                       echo '<li><a href="logout.php"><span>Déconnexion</span></a></li>';
+                      if ($compte_type == '3') {
+                        echo '<li><a href="admin.php"><span>Admin</span></a></li>';
+                      }
+                      else {
+                      }
                   } else {
                       echo '<li><a href="login.php"><span>Connexion</span></a></li>';
                       echo '<li><a href="signup.php"><span>Inscription</span></a></li>';
