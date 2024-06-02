@@ -60,11 +60,11 @@ if ($result->num_rows > 0) {
 $sql = "SELECT * FROM compte WHERE type = 2";
 $result2 = $conn->query($sql);
 $compteAgent = $result2->fetch_all(MYSQLI_ASSOC);
-if (!is_array($compteAgent)) {
-  echo '$compteAgent n\'est pas un tableau';
-} else {
-  echo '$compteAgent est un tableau';
-}
+// if (!is_array($compteAgent)) {
+//   echo '$compteAgent n\'est pas un tableau';
+// } else {
+//   echo '$compteAgent est un tableau';
+// }
 
 // Fermer la connexion à la base de données
 $conn->close();
@@ -532,7 +532,7 @@ agents.forEach(function(agent) {
     response: "Je vous met en contact avec : " + agent.prenom 
   };
   chatFlow["Contacter les agents ?"].followUp["Email"].followUp[agent.prenom] = {
-    response: "Je vous redirige vers l'email de " + agent.prenom + " : " + agent.email
+    response: "Je vous redirige vers l'email de " + agent.prenom + " est " + agent.email
   };
 });
 
@@ -552,6 +552,18 @@ function displayMessage(message, className, boolQuestion) {
     chatbotMessages.appendChild(nextButton);
 
     nextButton.addEventListener('click', function() {
+      if (message.startsWith("Je vous met en contact avec :")) {
+        var agent = message.split(" ")[7];
+        console.log(agent);
+        var currentPage = encodeURIComponent(window.location.href);
+        window.location.href = "videoConference.php?agent=" + encodeURIComponent(agent) + "&currentPage=" + currentPage;
+      }
+      if (message.startsWith("Je vous redirige vers l'email de ")) {
+        var email = message.split(" ")[8];
+        console.log(email);
+        var currentPage = encodeURIComponent(window.location.href);
+        window.location.href = "sendEmail.php?email=" + encodeURIComponent(email) + "&currentPage=" + currentPage;
+      }
       if (currentChat.followUp) {
         displayQuestions(currentChat.followUp);
         currentChat = currentChat.followUp;
@@ -560,6 +572,7 @@ function displayMessage(message, className, boolQuestion) {
         currentChat = chatFlow;
       }
     });
+    
   }
 }
 
