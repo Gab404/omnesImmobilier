@@ -10,6 +10,7 @@ if (isset($_SESSION['email'])) {
 
 $compte_email = $_SESSION['email'];
 
+
 // Informations de connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -23,6 +24,16 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connexion échouée: " . $conn->connect_error);
 }
+
+// Requête SQL pour récupérer le type de compte
+$sql = "SELECT type FROM compte WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $compte_email);
+$stmt->execute();
+$stmt->bind_result($compte_type);
+$stmt->fetch();
+$stmt->close();
+
 
 // Requête SQL pour récupérer les données des biens immobiliers
 $sql = "
@@ -113,6 +124,7 @@ if ($result_favoris->num_rows > 0) {
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -213,6 +225,29 @@ if ($result_favoris->num_rows > 0) {
         .favoris-btn i {
             margin-right: 5px;
         }
+        .btn-delete {
+            background-color: transparent;
+            border: none;
+            color: #ff0000; /* Rouge moderne pour attirer l'attention */
+            font-size: 1.5rem; /* Taille de la croix */
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            position: absolute;
+            left: 2%;
+            top: 1%;
+            font-size: 200%;
+        }
+
+        .btn-delete:hover {
+            color: #cc0000; /* Couleur de survol */
+        }
+
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
@@ -289,56 +324,75 @@ if ($result_favoris->num_rows > 0) {
 
     <div id="planning">
     <div class="container-fluid mt-5">
-        <h1 class="my-4 text-center mb-3" style="color: black;">Nos Biens Immobiliers</h1>
-        <div class="container-fluid mt-3 text-center" style="width: 30%;">
+    <h1 class="my-4 text-center mb-5" style="color: #007bff;">
+    <span style="color: black;">Nos </span>Biens <span style="color: black;">Immobiliers</span>
+        </h1>
+        <div class="container-fluid mt-3 text-center">
             <div class="row">
-                <div class="col-md-12">
-                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par adresse ou id">
+                <div class="col-md-6 d-flex justify-content-center align-items-center">
+                <?php if ($compte_type == 3): ?>
+                    <form action="addImmo.php" method="get" class="favoris-form">
+                        <button type="submit" class="btn btn-primary rounded-circle shadow" style="margin-top: -15px;">
+                            <i class="bi bi-plus" style="font-size: 150%;"></i>
+                        </button>
+                    </form>
+                <?php endif; ?>
+                    <input type="text" id="searchInput" class="form-control ml-3 mb-3" placeholder="Rechercher par adresse ou id">
                 </div>
             </div>
         </div>
+
         <div class="row" id="searchResult">
-            <?php
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        echo '<div class="col-md-4">';
-                        echo '    <div class="card">';
-                        echo '        <img src="' . $row["immobilierPhoto"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
-                        echo '        <div class="card-body d-flex flex-column">';
-                        echo '            <div class="mt-auto text-center">';
-                        echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
-                        if ($row["type"] == "location") {
-                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / mois</b></p>';
-                        } else if ($row["type"] == "terrain") {
-                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / m²</b></p>';
-                        } else {
-                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€</b></p>';
-                        }
-                        echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
-                        echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '"data-agentEmail="' . $row["agentEmail"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-description="' . $row["description"] . '" data-id="' . $row["id"] .'" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
-                        if ($row['favorisId']) {
-                            echo '<form action="remove_from_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
-                                    <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                    <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
-                                    <button type="submit" class="favoris-btn favorited"><i class="fas fa-heart" style="font-size: 150%;"></i></button>
-                                </form>';
-                        } else {
-                            echo '<form action="add_to_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
-                                    <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                    <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
-                                    <button type="submit" class="favoris-btn"><i class="far fa-heart" style="font-size: 150%;"></i></button>
-                                </form>';
-                        }
-                        echo '            </div>';
-                        echo '        </div>';
-                        echo '    </div>';
-                        echo '</div>';                  
+        <?php
+            if ($result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo '<div class="col-md-4">';
+                    echo '    <div class="card">';
+                    echo '        <img src="' . $row["immobilierPhoto"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
+                    echo '        <div class="card-body d-flex flex-column">';
+                    echo '            <div class="mt-auto text-center">';
+                    echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
+                    if ($row["type"] == "location") {
+                        echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / mois</b></p>';
+                    } else if ($row["type"] == "terrain") {
+                        echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / m²</b></p>';
+                    } else {
+                        echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€</b></p>';
                     }
-                } else {
-                    echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
+                    echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
+                    echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '" data-agentemail="' . $row["agentEmail"] . '" data-adresse="' . $row["adresse"] . '" data-nbpiece="' . $row["nbPiece"] . '" data-nbchambre="' . $row["nbChambre"] . '" data-description="' . $row["description"] . '" data-id="' . $row["id"] . '" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
+                    if ($row['favorisId']) {
+                        echo '<form action="remove_from_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
+                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
+                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
+                                <button type="submit" class="favoris-btn favorited"><i class="fas fa-heart" style="font-size: 150%;"></i></button>
+                            </form>';
+                    } else {
+                        echo '<form action="add_to_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
+                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
+                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
+                                <button type="submit" class="favoris-btn"><i class="far fa-heart" style="font-size: 150%;"></i></button>
+                            </form>';
+                    }
+                    if ($compte_type == 3) {
+                        echo '<form action="delete_immobilier.php" method="post" onsubmit="return confirm(\'Êtes-vous sûr de vouloir supprimer cet immobilier ?\');" style="display:inline;">
+                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
+                                <button type="submit" class="btn-delete">
+                                    &times;
+                                </button>
+                              </form>';
+                    }
+                    echo '            </div>';
+                    echo '        </div>';
+                    echo '    </div>';
+                    echo '</div>';
                 }
-                $conn->close();
+            } else {
+                echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
+            }
+            $conn->close();
             ?>
+
         </div>
     </div>
 
@@ -374,6 +428,12 @@ if ($result_favoris->num_rows > 0) {
             </div>
 
     </center>
+    <div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: #333; color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.5s linear;">
+  <div id="chatbot-messages" style="height: 90%; overflow: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin-bottom: 10px;"></div>
+  <input id="chatbot-input" type="text" style="width: 100%; padding: 5px; border: 1px solid #dee2e6; border-radius: 5px; background-color: #555; color: white;" placeholder="Type your message here..." />
+</div>
+
+<button id="chatbot-toggle" style="position: fixed; bottom: 10px; right: 10px; z-index: 1001; background-color: #007BFF; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; line-height: 50px; text-align: center;">&#8593;</button>
 
     <footer class="footer">
         <div class="container-fluid">
@@ -407,6 +467,10 @@ if ($result_favoris->num_rows > 0) {
         </div>
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
         $(document).ready(function() {
@@ -475,6 +539,12 @@ $(document).ready(function() {
         searchImmobiliers(inputVal);
     });
 
+    $('#immoModal').on('hidden.bs.modal', function () {
+        $(this).find('form').trigger('reset');
+        $(this).find('img').attr('src', '');
+        $(this).find('.modal-body p').text('');
+    });
+
     $(document).ready(function() {
 
     // Gestion des clics sur les boutons immo
@@ -531,11 +601,25 @@ function searchImmobiliers(inputVal) {
 
 
 </script>
-
+<script>
+  document.getElementById('chatbot-toggle').addEventListener('click', function() {
+    var chatbot = document.getElementById('chatbot');
+    var toggleButton = document.getElementById('chatbot-toggle');
+    if (chatbot.style.opacity === '0') {
+      chatbot.style.opacity = '1';
+      chatbot.style.visibility = 'visible';
+      toggleButton.innerHTML = '&#8595;';
+    } else {
+      chatbot.style.opacity = '0';
+      chatbot.style.visibility = 'hidden';
+      toggleButton.innerHTML = '&#8593;';
+    }
+  });
+</script>
+<script src="js/chatbot.js"></script>
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.sticky.js"></script>
 <script src="js/main.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 

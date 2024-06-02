@@ -1,7 +1,36 @@
 <?php
 session_start();
-?>
+ // Vérifiez si l'utilisateur ou l'utilisatrice est connecté
+ if(isset($_SESSION['email'])) {
 
+  $servername = "localhost";
+  $username = "root";
+  $password = "";
+  $dbname = "omnesimmobilier";
+
+  $compte_email = $_SESSION['email'];
+
+  // Création de la connexion
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Vérification de la connexion
+  if ($conn->connect_error) {
+      die("Connexion échouée: " . $conn->connect_error);
+  }
+
+  // Requête SQL pour récupérer le type de compte
+  $sql = "SELECT type FROM compte WHERE email = ?";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("s", $compte_email);
+  $stmt->execute();
+  $stmt->bind_result($compte_type);
+  $stmt->fetch();
+  $stmt->close();
+
+  
+} else {
+}
+?>
 <!doctype html>
 <html lang="en">
   <head>
@@ -209,34 +238,9 @@ session_start();
 </section>
     </br></br>
     </br></br>
-    <div class="presentation">
-        <h1>OmnesImmobilier : Votre Partenaire de Confiance en Immobilier</h1>
-        <br></br>
-        <p>Bienvenue chez <strong>OmnesImmobilier</strong>, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</p>
-        
-        <div class="section-title">Notre Mission</div>
-        <p>Chez OmnesImmobilier, notre mission est simple : vous offrir un service personnalisé et de qualité pour répondre à toutes vos attentes. Nous nous engageons à vous fournir des solutions adaptées à vos besoins spécifiques, en mettant l'accent sur la transparence, la fiabilité et la satisfaction client.</p>
-        
-        <div class="section-title">Nos Services</div>
-        <p><strong>Achat et Vente</strong> : Que vous soyez à la recherche de votre résidence principale, d'une résidence secondaire ou d'un investissement locatif, nous vous aidons à trouver le bien idéal. Notre équipe d'experts vous accompagne également dans la vente de votre propriété, en vous proposant une estimation précise et en mettant en place des stratégies de marketing efficaces pour une vente rapide et au meilleur prix.</p>
-        <p><strong>Location</strong> : Nous vous aidons à trouver le locataire parfait pour votre bien ou à dénicher la location qui répond à tous vos critères. Grâce à notre réseau et notre expertise, nous assurons une gestion locative sans tracas.</p>
-        <p><strong>Gestion de Biens</strong> : Libérez-vous des contraintes de la gestion immobilière grâce à nos services complets de gestion de biens. Nous prenons en charge toutes les démarches administratives et techniques pour que vous puissiez profiter de vos investissements en toute sérénité.</p>
-        <p><strong>Conseil en Investissement</strong> : Bénéficiez de notre expertise pour optimiser vos investissements immobiliers. Nous vous guidons dans le choix des meilleurs placements et vous accompagnons dans leur gestion pour maximiser votre rentabilité.</p>
-        
-        <div class="section-title">Nos Valeurs</div>
-        <p><strong>Professionnalisme</strong> : Notre équipe est composée de professionnels passionnés et expérimentés, dédiés à vous offrir un service irréprochable.</p>
-        <p><strong>Écoute et Proximité</strong> : Nous privilégions une relation de proximité avec nos clients, basée sur l'écoute et la compréhension de vos besoins.</p>
-        <p><strong>Innovation</strong> : Toujours à l'affût des dernières tendances et technologies, nous utilisons des outils modernes pour optimiser nos services et vous offrir une expérience client exceptionnelle.</p>
-        
-        <div class="section-title">Contactez-nous</div>
-        <p>N'attendez plus pour concrétiser vos projets immobiliers ! Contactez-nous dès aujourd'hui pour discuter de vos besoins et découvrir comment nous pouvons vous aider à réaliser vos ambitions.</p>
-        
-        <p><strong>OmnesImmobilier</strong><br>
-        Votre avenir commence ici.</p>
-    </div>
-    <section id="info-semaine" class="mt-5">
+    <section id="info-semaine" class=" mb-4">
     <div class="container">
-        <h2 class="section-title text-center mb-5">Les Moments Forts de la Semaine</h2>
+        <h2 class="section-title text-center mb-3" style="font-size: 150%;">Les Moments Forts de la Semaine</h2>
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card rounded-lg border-0 shadow">
@@ -268,13 +272,36 @@ session_start();
         </div>
     </div>
 </section>
+    <div class="presentation">
+        <h1>Omnes Immobilier : Votre Partenaire de Confiance en Immobilier</h1>
+        <br></br>
+        <p>Bienvenue chez <strong>OmnesImmobilier</strong>, votre expert de confiance pour toutes vos transactions immobilières. Forts de notre expérience et de notre connaissance approfondie du marché, nous vous accompagnons dans chaque étape de vos projets immobiliers, que ce soit pour l'achat, la vente, la location ou la gestion de biens.</p>
+        
+        <div class="section-title">Notre Mission</div>
+        <p>Chez OmnesImmobilier, notre mission est simple : vous offrir un service personnalisé et de qualité pour répondre à toutes vos attentes. Nous nous engageons à vous fournir des solutions adaptées à vos besoins spécifiques, en mettant l'accent sur la transparence, la fiabilité et la satisfaction client.</p>
+        
+        <div class="section-title">Nos Services</div>
+        <p><strong>Achat et Vente</strong> : Que vous soyez à la recherche de votre résidence principale, d'une résidence secondaire ou d'un investissement locatif, nous vous aidons à trouver le bien idéal. Notre équipe d'experts vous accompagne également dans la vente de votre propriété, en vous proposant une estimation précise et en mettant en place des stratégies de marketing efficaces pour une vente rapide et au meilleur prix.</p>
+        <p><strong>Location</strong> : Nous vous aidons à trouver le locataire parfait pour votre bien ou à dénicher la location qui répond à tous vos critères. Grâce à notre réseau et notre expertise, nous assurons une gestion locative sans tracas.</p>
+        <p><strong>Gestion de Biens</strong> : Libérez-vous des contraintes de la gestion immobilière grâce à nos services complets de gestion de biens. Nous prenons en charge toutes les démarches administratives et techniques pour que vous puissiez profiter de vos investissements en toute sérénité.</p>
+        <p><strong>Conseil en Investissement</strong> : Bénéficiez de notre expertise pour optimiser vos investissements immobiliers. Nous vous guidons dans le choix des meilleurs placements et vous accompagnons dans leur gestion pour maximiser votre rentabilité.</p>
+        
+        <div class="section-title">Nos Valeurs</div>
+        <p><strong>Professionnalisme</strong> : Notre équipe est composée de professionnels passionnés et expérimentés, dédiés à vous offrir un service irréprochable.</p>
+        <p><strong>Écoute et Proximité</strong> : Nous privilégions une relation de proximité avec nos clients, basée sur l'écoute et la compréhension de vos besoins.</p>
+        <p><strong>Innovation</strong> : Toujours à l'affût des dernières tendances et technologies, nous utilisons des outils modernes pour optimiser nos services et vous offrir une expérience client exceptionnelle.</p>
+        
+        <div class="section-title">Contactez-nous</div>
+        <p>N'attendez plus pour concrétiser vos projets immobiliers ! Contactez-nous dès aujourd'hui pour discuter de vos besoins et découvrir comment nous pouvons vous aider à réaliser vos ambitions.</p>
+        
+        <p><strong>OmnesImmobilier</strong><br>
+        Votre avenir commence ici.</p>
+    </div>
+      
 
-
-  
-
-  <div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.5s linear;">
+<div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: #333; color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.5s linear;">
   <div id="chatbot-messages" style="height: 90%; overflow: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin-bottom: 10px;"></div>
-  <input id="chatbot-input" type="text" style="width: 100%; padding: 5px; border: 1px solid #dee2e6; border-radius: 5px;" placeholder="Type your message here..." />
+  <input id="chatbot-input" type="text" style="width: 100%; padding: 5px; border: 1px solid #dee2e6; border-radius: 5px; background-color: #555; color: white;" placeholder="Type your message here..." />
 </div>
 
 <button id="chatbot-toggle" style="position: fixed; bottom: 10px; right: 10px; z-index: 1001; background-color: #007BFF; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; line-height: 50px; text-align: center;">&#8593;</button>

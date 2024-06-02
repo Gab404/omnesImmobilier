@@ -28,6 +28,15 @@ if (isset($_SESSION['email'])) {
     $stmt->fetch();
     $stmt->close();
 
+     // Requête SQL pour récupérer le type de compte
+    $sql = "SELECT type FROM compte WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->bind_result($compte_type);
+    $stmt->fetch();
+    $stmt->close();
+
     // Requête SQL pour récupérer les données des biens immobiliers
     $sql = "
     SELECT 
@@ -126,6 +135,33 @@ $conn->close();
         .property-price {
             font-size: 0.9rem; 
         }
+        .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .close-button:hover {
+        background-color: #ff4c4c;
+        transform: scale(1.1);
+    }
+
+    .close-button:focus {
+        outline: none;
+    }
     </style>
     <title>Omnes Immobilier - Mon Compte</title>
 </head>
@@ -245,12 +281,16 @@ $conn->close();
 
         <?php
         echo '<center>';
-        echo '<h2 class="my-4 text-center mb-5" style="color: #007bff;">Vos biens immobiliers favoris:</h2>';
+        echo '<hr style="width: 50%;"><h1 class="my-4 text-center mb-5" style="color: #007bff;"><span style="color: black;">Vos </span> Favoris</h1>';
         echo '<div class="row">'; // Début du conteneur de grille
         
         while ($row = $result->fetch_assoc()) {
-            echo '<div class="col-md-4">'; // Chaque carte prend 4 colonnes sur un total de 12, donc 3 cartes par ligne
-            echo '<div class="card property-card tight-card">';
+            echo '<div class="col-md-4 mb-4">'; // Chaque carte prend 4 colonnes sur un total de 12, avec une marge inférieure de 4
+            echo '<div class="card shadow property-card" style="height: 100%;width: 90%;">'; // Ajout d'une ombre pour un aspect moderne et définir une hauteur fixe pour chaque carte
+            echo '<form method="POST" action="removeFavori.php">
+            <input type="hidden" name="favorisId" value="' . $row['favorisId'] . '">
+            <button type="submit" class="close-button">x</button>
+        </form>';
             echo '<img src="' . $row['immobilierPhoto'] . '" class="card-img-top property-image" alt="Property image">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title property-title">' . $row['adresse'] . '</h5>';
@@ -273,6 +313,13 @@ $conn->close();
         }
         </script>
     </div>
+    <div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: #333; color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.5s linear;">
+  <div id="chatbot-messages" style="height: 90%; overflow: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin-bottom: 10px;"></div>
+  <input id="chatbot-input" type="text" style="width: 100%; padding: 5px; border: 1px solid #dee2e6; border-radius: 5px; background-color: #555; color: white;" placeholder="Type your message here..." />
+</div>
+
+<button id="chatbot-toggle" style="position: fixed; bottom: 10px; right: 10px; z-index: 1001; background-color: #007BFF; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; line-height: 50px; text-align: center;">&#8593;</button>
+
 
     <footer class="footer">
         <div class="container-fluid">
@@ -305,7 +352,23 @@ $conn->close();
             </div>
         </div>
     </footer>
+    <script>
 
+    document.getElementById('chatbot-toggle').addEventListener('click', function() {
+        var chatbot = document.getElementById('chatbot');
+        var toggleButton = document.getElementById('chatbot-toggle');
+        if (chatbot.style.opacity === '0') {
+        chatbot.style.opacity = '1';
+        chatbot.style.visibility = 'visible';
+        toggleButton.innerHTML = '&#8595;';
+        } else {
+        chatbot.style.opacity = '0';
+        chatbot.style.visibility = 'hidden';
+        toggleButton.innerHTML = '&#8593;';
+        }
+    });
+    </script>
+    <script src="js/chatbot.js"></script>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>

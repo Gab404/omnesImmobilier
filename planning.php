@@ -9,6 +9,8 @@ if (!isset($_SESSION['email'])) {
     exit();
 }
 
+$compte_email = $_SESSION['email'];
+
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
@@ -22,6 +24,16 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+ // Requête SQL pour récupérer le type de compte
+ $sql = "SELECT type FROM compte WHERE email = ?";
+ $stmt = $conn->prepare($sql);
+ $stmt->bind_param("s", $compte_email);
+ $stmt->execute();
+ $stmt->bind_result($compte_type);
+ $stmt->fetch();
+ $stmt->close();
+
 
 // Échapper les entrées utilisateur pour éviter les attaques par injection SQL
 $clientEmail = $conn->real_escape_string($_SESSION['email']);
@@ -190,6 +202,26 @@ $conn->close();
           max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
           margin-right: 10px;
       }
+
+      .chatbot-question {
+        background-color: #0067d6; /* Blue */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        transition-duration: 0.4s;
+        border-radius: 20px;
+        }
+
+        .chatbot-question:hover {
+        background-color: #005cbf; /* Darker blue */
+        color: white;
+        }
     </style>
 </head>
 <body>
@@ -275,9 +307,18 @@ $conn->close();
                 <button id="cancelEventBtn" class="btn btn-primary" style="font-size: 80%; margin: 10px 0;">Annuler le rendez-vous</button>
             </form>
         </div>
+        <div class="mt-5">
+        <a href="immobilier.php" class="btn btn-primary">Cliquez ici pour réserver</a>
+        </div>
 
     </div>
 </div>  
+<div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: #333; color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.2s linear;">
+  <div id="chatbot-messages" style="height: 90%; overflow: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin-bottom: 10px; transition: visibility 0s, opacity 1s linear; /* Transition plus rapide */"></div>
+</div>
+
+<button id="chatbot-toggle" style="position: fixed; bottom: 10px; right: 10px; z-index: 1001; background-color: #007BFF; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; line-height: 50px; text-align: center;">&#8593;</button>
+
 
 <footer class="footer">
         <div class="container-fluid">
@@ -441,6 +482,100 @@ html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.
 });
 
 </script>
+<script>
+  document.getElementById('chatbot-toggle').addEventListener('click', function() {
+    var chatbot = document.getElementById('chatbot');
+    var toggleButton = document.getElementById('chatbot-toggle');
+    if (chatbot.style.opacity === '0') {
+      chatbot.style.opacity = '1';
+      chatbot.style.visibility = 'visible';
+      toggleButton.innerHTML = '&#8595;';
+    } else {
+      chatbot.style.opacity = '0';
+      chatbot.style.visibility = 'hidden';
+      toggleButton.innerHTML = '&#8593;';
+    }
+  });
+</script>
+<script>
+var chatbotMessages = document.getElementById('chatbot-messages');
+var chatFlow = {
+  "Peut tu chier ?": {
+    response: "Oui, je peux chier.",
+    followUp: {
+      "Nan jure ?": {
+        response: "Je jure que je peux chier."
+      },
+      "Je te crois pas": {
+        response: "La vie que je peux chier."
+      }
+    }
+  },
+  "Question 2": {
+    response: "Réponse 2"
+  }
+};
+var currentChat = chatFlow;
+
+function displayMessage(message, className, boolQuestion) {
+  var messageDiv = document.createElement('div');
+  messageDiv.textContent = message;
+  messageDiv.className = className;
+  chatbotMessages.appendChild(messageDiv);
+
+  if (!boolQuestion) {
+    var nextButton = document.createElement('button');
+    nextButton.textContent = 'Suivant';
+    nextButton.className = 'chatbot-question'; // Assign the same class as the question buttons
+    nextButton.style.padding = '5px 10px'; // Adjust the padding to make the button smaller
+    chatbotMessages.appendChild(nextButton);
+
+    nextButton.addEventListener('click', function() {
+      if (currentChat.followUp) {
+        displayQuestions(currentChat.followUp);
+        currentChat = currentChat.followUp;
+      } else {
+        displayQuestions(chatFlow);
+        currentChat = chatFlow;
+      }
+    });
+  }
+}
+
+function displayQuestions(questions) {
+  chatbotMessages.innerHTML = ''; // Clear the chatbot messages
+  for (var question in questions) {
+    displayMessage(question, 'chatbot-question', true);
+  }
+}
+
+function hideQuestions() {
+  chatbotMessages.innerHTML = '';
+}
+
+displayQuestions(currentChat); // Display the main questions at the beginning
+
+// Add a click event listener to each question
+chatbotMessages.addEventListener('click', function(e) {
+  if (e.target && e.target.className === 'chatbot-question') {
+    var question = e.target.textContent;
+
+    var response = currentChat[question].response;
+    var followUp = currentChat[question].followUp;
+
+    // Update currentChat to the selected question
+    currentChat = currentChat[question];
+
+    // Remove the user's question
+    e.target.parentNode.removeChild(e.target);
+
+    hideQuestions(); // Hide the questions after the user has clicked on one
+
+    displayMessage(response, 'chatbot-response', false);
+  }
+});
+</script>
+<!-- <script src="js/chatbot.js"></script> -->
 
 </body>
 </html>
