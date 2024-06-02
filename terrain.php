@@ -280,6 +280,19 @@ if ($result_favoris->num_rows > 0) {
         background-color: #005cbf; /* Darker blue */
         color: white;
         }
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .gif {
+            width: 600px;
+            height: auto;
+            margin-top: 1rem;
+            margin-bottom: 1rem; 
+            
+        }
+
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
@@ -487,23 +500,7 @@ if ($result_favoris->num_rows > 0) {
                   
                 </div>
                
-                <div class="container">
-        <div class="left-column">
-        <div class="contact-info">
-                    
-                    <h6 class="big-title">Notre Histoire</h6>
-                    <p class="history-text">
-        Omnes Immobilier est une agence immobilière dynamique et innovante, fondée en 2024 et située au cœur du 15ème arrondissement de Paris, à quelques pas de la majestueuse Tour Eiffel. Notre entreprise a été créée avec une mission claire : révolutionner le marché immobilier parisien en offrant des services exceptionnels, personnalisés et axés sur la satisfaction de nos clients.
-    </p>
-    <p class="history-text">
-        Notre équipe est composée de professionnels expérimentés et passionnés, dédiés à vous accompagner dans tous vos projets immobiliers, qu'il s'agisse d'achat, de vente, de location ou d'investissement. Chez Omnes Immobilier, nous croyons en une approche humaine et transparente, où chaque client est traité avec le plus grand soin et le respect qu'il mérite.
-    </p>
-    <p class="history-text">
-        Depuis notre lancement, nous avons aidé de nombreux clients à trouver leur foyer idéal et à réaliser leurs rêves immobiliers. Rejoignez-nous et découvrez comment Omnes Immobilier peut transformer votre vision en réalité.
-    </p>
-    </div>
-    </div>
-                </div>
+                
                 <div class="gif">
                 <img src="assets/omnes.gif" alt="Omnes Immobilier GIF" width="300">
             </div>
