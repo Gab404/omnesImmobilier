@@ -1,5 +1,63 @@
 <?php
 session_start();
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['email'])) {
+    // Rediriger l'utilisateur vers la page de connexion s'il n'est pas connecté
+    header("Location: login.php");
+    exit();
+}
+
+$compte_email = $_SESSION['email'];
+
+// Connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "omnesimmobilier";
+
+// Créer une connexion
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Vérifier la connexion
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+ // Requête SQL pour récupérer le type de compte
+ $sql = "SELECT type FROM compte WHERE email = ?";
+ $stmt = $conn->prepare($sql);
+ $stmt->bind_param("s", $compte_email);
+ $stmt->execute();
+ $stmt->bind_result($compte_type);
+ $stmt->fetch();
+ $stmt->close();
+
+
+// Échapper les entrées utilisateur pour éviter les attaques par injection SQL
+$clientEmail = $conn->real_escape_string($_SESSION['email']);
+
+// Requête SQL pour récupérer les événements du client connecté
+$sql = "SELECT p.*, c.photoPath, TIME_FORMAT(p.heure, '%H:%i') as formatted_time
+        FROM planning p
+        INNER JOIN compte c ON p.mailAgent = c.email
+        WHERE p.mailClient = '$clientEmail'";
+$result = $conn->query($sql);
+
+// Créer un tableau associatif pour stocker les événements
+$events = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $row['heure'] = $row['formatted_time']; // Remplacer 'heure' par 'formatted_time'
+        // Ajouter la colonne photoPath à chaque objet event
+        $row['photoPath'] = $row['photoPath'];
+        $events[$row['date']][] = $row; // Utiliser la date comme clé et stocker tous les événements pour cette date
+    }
+}
+
+// Récupérer les agents de type 2
+$sql = "SELECT * FROM compte WHERE type = 2";
+$result2 = $conn->query($sql);
+$compteAgentChatBot = $result2->fetch_all(MYSQLI_ASSOC);
 
 // Informations de connexion à la base de données
 $servername = "localhost";
@@ -78,75 +136,6 @@ if (isset($_SESSION['email'])) {
 $conn->close();
 ?>
 
-<?php
-
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['email'])) {
-    // Rediriger l'utilisateur vers la page de connexion s'il n'est pas connecté
-    header("Location: login.php");
-    exit();
-}
-
-$compte_email = $_SESSION['email'];
-
-// Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "omnesimmobilier";
-
-// Créer une connexion
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Vérifier la connexion
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
- // Requête SQL pour récupérer le type de compte
- $sql = "SELECT type FROM compte WHERE email = ?";
- $stmt = $conn->prepare($sql);
- $stmt->bind_param("s", $compte_email);
- $stmt->execute();
- $stmt->bind_result($compte_type);
- $stmt->fetch();
- $stmt->close();
-
-
-// Échapper les entrées utilisateur pour éviter les attaques par injection SQL
-$clientEmail = $conn->real_escape_string($_SESSION['email']);
-
-// Requête SQL pour récupérer les événements du client connecté
-$sql = "SELECT p.*, c.photoPath, TIME_FORMAT(p.heure, '%H:%i') as formatted_time
-        FROM planning p
-        INNER JOIN compte c ON p.mailAgent = c.email
-        WHERE p.mailClient = '$clientEmail'";
-$result = $conn->query($sql);
-
-// Créer un tableau associatif pour stocker les événements
-$events = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $row['heure'] = $row['formatted_time']; // Remplacer 'heure' par 'formatted_time'
-        // Ajouter la colonne photoPath à chaque objet event
-        $row['photoPath'] = $row['photoPath'];
-        $events[$row['date']][] = $row; // Utiliser la date comme clé et stocker tous les événements pour cette date
-    }
-}
-
-// Récupérer les agents de type 2
-$sql = "SELECT * FROM compte WHERE type = 2";
-$result2 = $conn->query($sql);
-$compteAgent = $result2->fetch_all(MYSQLI_ASSOC);
-// if (!is_array($compteAgent)) {
-//   echo '$compteAgent n\'est pas un tableau';
-// } else {
-//   echo '$compteAgent est un tableau';
-// }
-
-// Fermer la connexion à la base de données
-$conn->close();
-?>
 
 <!doctype html>
 <html lang="fr">
@@ -458,7 +447,7 @@ $conn->close();
 </script>
 <script>
 var chatbotMessages = document.getElementById('chatbot-messages');
-var agents = <?php echo json_encode($compteAgent); ?>;
+var agents = <?php echo json_encode($compteAgentChatBot); ?>;
 var chatFlow = {
   "Contacter les agents ?": {
     response: "Choississez un moyen de contact :",
