@@ -375,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += `<div class="calendar-day"></div>`;
             } else {
                 const eventKey = `${year}-${month + 1 < 10 ? '0' : ''}${month + 1}-${day < 10 ? '0' : ''}${day}`;
-                const event = events[eventKey];
+                const event = events.includes(eventKey);
                 const isCurrentDay = (day === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear());
                 const isPastDay = (day < new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear());
                 const dayClass = isCurrentDay ? 'current-day' : (isPastDay ? 'past-day' : '');
@@ -430,7 +430,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const clickedDay = event.target;
 
         // Vérifier si la case cliquée est une journée valide du calendrier
-        if (clickedDay.classList.contains('calendar-day') && clickedDay.innerText !== '') {
+        if (clickedDay.classList.contains('calendar-day') && clickedDay.innerText !== '' && !clickedDay.classList.contains('has-event')) {
             const day = clickedDay.innerText.padStart(2, '0'); // Ajouter un zéro devant les jours de 1 à 9
             const month = (currentMonth + 1).toString().padStart(2, '0'); // Ajouter un zéro devant les mois de 1 à 9
             const year = currentYear;
@@ -526,9 +526,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 const isCurrentDay = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
                 const isPastDay = (day < today.getDate() && month === today.getMonth() && year === today.getFullYear());
+                const isWeekend = (new Date(year, month, day).getDay() === 0 || new Date(year, month, day).getDay() === 6);
                 const dayClass = isCurrentDay ? 'current-day' : (isPastDay ? 'past-day' : '');
-                const eventClass = event ? 'has-event' : '';
-html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.stringify(event || {})}'>${day}</div>`;
+                const eventClass = event || isWeekend ? 'has-event' : '';
+                html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.stringify(event || {})}'>${day}</div>`;
                 day++;
             }
         }

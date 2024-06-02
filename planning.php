@@ -476,7 +476,7 @@ html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.
                 <button class="btn btn-primary" style="font-size: 80%; margin: 10px 0;">Annuler le rendez-vous</button>
             </form>
         `;
-        eventDetailsHtml += `<hr>`; // Ajout d'une ligne horizontale pour l'espacement
+        eventDetailsHtml += `<hr style="width: 60%;">`; // Ajout d'une ligne horizontale pour l'espacement
     });
     eventDetails.innerHTML = eventDetailsHtml;
     eventDetails.style.display = 'block';
