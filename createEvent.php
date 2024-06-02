@@ -6,7 +6,8 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0;
+            background-color: #ffffff;
+            position: relative; /* Needed for positioning */
         }
         a {
             display: inline-block;
@@ -18,13 +19,33 @@
             border-radius: 5px;
         }
         a:hover {
-            background-color: #45a049;
+            background-color: #052360;
+        }
+        .logo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px; /* Adjust size as needed */
+            object-fit: cover; /* Ensure the image covers the space without distortion */
+            border: 5px solid #0056b3; /* Add border */
+            border-radius: 5px; /* Optional: rounded corners */
+            
+        }
+        .gif {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 250px; /* Adjust size as needed */
+            border: 5px solid #0056b3; /* Add border */
+            border-radius: 5px; /* Optional: rounded corners */
         }
     </style>
 </head>
 <body>
     <center>
-        <h1>Choisissez une heure pour la visite</h1>
+    <h1 class="my-4 text-center mb-5" style="color: #007bff;">
+    <span style="color: black;">Choisissez </span>une horaire de visite
+        </h1>
     </center>
 <center>
 <?php
@@ -79,5 +100,7 @@ foreach ($availableHours as $hour) {
 $conn->close();
 ?>
 </center>
+<img src="assets/omnes.gif" alt="Omnes Immobilier GIF" class="gif">
+<img src="assets/pub.gif" alt="Omnes Immobilier Logo" class="logo">
 </body>
 </html>
