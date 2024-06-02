@@ -1,66 +1,5 @@
 <?php
 session_start();
-// Vérifier si l'utilisateur est connecté
-if (!isset($_SESSION['email'])) {
-    // Rediriger l'utilisateur vers la page de connexion s'il n'est pas connecté
-    header("Location: login.php");
-    exit();
-}
-
-$compte_email = $_SESSION['email'];
-
-// Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "omnesimmobilier";
-
-// Créer une connexion
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Vérifier la connexion
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
- // Requête SQL pour récupérer le type de compte
- $sql = "SELECT type FROM compte WHERE email = ?";
- $stmt = $conn->prepare($sql);
- $stmt->bind_param("s", $compte_email);
- $stmt->execute();
- $stmt->bind_result($compte_type);
- $stmt->fetch();
- $stmt->close();
-
-
-// Échapper les entrées utilisateur pour éviter les attaques par injection SQL
-$clientEmail = $conn->real_escape_string($_SESSION['email']);
-
-// Requête SQL pour récupérer les événements du client connecté
-$sql = "SELECT p.*, c.photoPath, TIME_FORMAT(p.heure, '%H:%i') as formatted_time
-        FROM planning p
-        INNER JOIN compte c ON p.mailAgent = c.email
-        WHERE p.mailClient = '$clientEmail'";
-$result = $conn->query($sql);
-
-// Créer un tableau associatif pour stocker les événements
-$events = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $row['heure'] = $row['formatted_time']; // Remplacer 'heure' par 'formatted_time'
-        // Ajouter la colonne photoPath à chaque objet event
-        $row['photoPath'] = $row['photoPath'];
-        $events[$row['date']][] = $row; // Utiliser la date comme clé et stocker tous les événements pour cette date
-    }
-}
-
-// Récupérer les agents de type 2
-$sql = "SELECT * FROM compte WHERE type = 2";
-$result2 = $conn->query($sql);
-$compteAgent = $result2->fetch_all(MYSQLI_ASSOC);
-
-$compte_email = $_SESSION['email'];
-
 
 // Informations de connexion à la base de données
 $servername = "localhost";
@@ -76,16 +15,6 @@ if ($conn->connect_error) {
     die("Connexion échouée: " . $conn->connect_error);
 }
 
-// Requête SQL pour récupérer le type de compte
-$sql = "SELECT type FROM compte WHERE email = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $compte_email);
-$stmt->execute();
-$stmt->bind_result($compte_type);
-$stmt->fetch();
-$stmt->close();
-
-
 // Requête SQL pour récupérer les données des biens immobiliers
 $sql = "
     SELECT 
@@ -99,73 +28,17 @@ $sql = "
         i.adresse, 
         i.type, 
         i.prix,
-        i.id,
-        f.id AS favorisId
+        i.id
     FROM 
         immobilier i
     JOIN 
         compte c ON i.agent = c.email
-    LEFT JOIN
-        favoris f ON i.id = f.idImmobilier AND f.mailClient = ?
     WHERE
         c.type = 2 AND i.type = 'terrain'
     ORDER BY 
         RAND()";
-
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $compte_email); // Remplacez $compte_email par l'email du compte actuel
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $immoId = $_POST['immo_id'];
-    $favorisId = $_POST['favoris_id'];
-    $isFavoris = $_POST['is_favoris'];
-
-    if ($isFavoris) {
-        // Si l'immobilier est déjà en favoris, le supprimer
-        $sql = "DELETE FROM favoris WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $favorisId);
-        $stmt->execute();
-
-        echo 'removed';
-    } else {
-        // Sinon, ajouter l'immobilier aux favoris
-        $sql = "INSERT INTO favoris (mailClient, idImmobilier) VALUES (?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $compte_email, $immoId);
-        $stmt->execute();
-
-        if ($stmt->error) {
-            echo "Erreur : " . $stmt->error;
-        } else {
-            echo 'added';
-        }
-    }
-}
+$result = $conn->query($sql);
 ?>
-
-<!-- <?php
-// Récupérez l'email du compte actuellement connecté
-$compte_email = $_SESSION['email'];
-
-// Créez une nouvelle requête SQL pour récupérer les favoris de l'utilisateur
-$sql_favoris = "SELECT * FROM favoris WHERE mailClient = '$compte_email'";
-
-// Exécutez la requête
-$result_favoris = $conn->query($sql_favoris);
-
-// Vérifiez si la requête a renvoyé des résultats
-if ($result_favoris->num_rows > 0) {
-    // Parcourez les résultats et affichez-les
-    while($row = $result_favoris->fetch_assoc()) {
-        echo "Id: " . $row["id"]. " - Email: " . $row["mailClient"]. " - Immobilier Id: " . $row["idImmobilier"]. "<br>";
-    }
-} else {
-    echo "Vous n'avez pas de favoris";
-}
-?> -->
 
 <!doctype html>
 <html lang="en">
@@ -175,12 +48,41 @@ if ($result_favoris->num_rows > 0) {
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
     <link rel="stylesheet" href="fonts/icomoon/style.css">
     <link rel="stylesheet" href="css/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
+         .container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start; /* Align items to the start */
+        }
+        .left-column {
+           
+            padding: 4px;
+        }
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .gif {
+            width: 600px;
+            height: auto;
+            margin-top: 1rem;
+            margin-bottom: 1rem; 
+        }
+        .hero-image-container {
+            position: fixed;
+            bottom: 100px;
+            right: 100px;
+            z-index: 1000;
+        }
+.hero-image {
+            width: 10Opx; /* Taille du GIF */
+            height: auto; /* Maintient les proportions */
+        }
+        
          .custom-box {
             border: 4px solid black;
             padding: 20px;
@@ -192,6 +94,17 @@ if ($result_favoris->num_rows > 0) {
             color: black;
             font-size: 40px;
         }
+        .big-title {
+        font-size: 2.5rem; /* Adjust size as needed */
+        font-weight: bold; /* Make it bold */
+        margin-top: 2rem;  /* Adjust the margin-top as needed */
+        text-align: center; /* Center align the text */
+    }
+    .history-text {
+        font-size: 1.1rem;
+        margin-top: 1rem; /* Space between title and text */
+        text-align: justify; /* Justify text alignment for a clean look */
+    }
         body {
             background-color: white;
         }
@@ -261,24 +174,8 @@ if ($result_favoris->num_rows > 0) {
           max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
           margin-right: 10px;
       }
-      .chatbot-question {
-        background-color: #0067d6; /* Blue */
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        transition-duration: 0.4s;
-        border-radius: 20px;
-        }
-
-        .chatbot-question:hover {
-        background-color: #005cbf; /* Darker blue */
-        color: white;
+      .contact-info {
+            margin-bottom: 2rem; /* Space between contact info and the title */
         }
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
@@ -352,80 +249,51 @@ if ($result_favoris->num_rows > 0) {
 
     <section id="accueil" class="mt-0">
         <img src="assets/bgTerrain.jpg" class="hero-image" alt="Hero Image">
+        
     </section>
 
 
     <div id="planning">
-    <div class="container-fluid mt-5">
-    <h1 class="my-4 text-center mb-5" style="color: #007bff;">
-    <span style="color: black;">Nos </span>Terrains
-        </h1>
-        <div class="container-fluid mt-3 text-center">
+    <div class="container-fluid mt-5 text-center">
+        <div class="custom-box">
+            Nos Terrains
+        </div>
+        <div class="container-fluid mt-3 text-center" style="width: 30%;">
             <div class="row">
-                <div class="col-md-6 d-flex justify-content-center align-items-center">
-                <?php if ($compte_type == 3): ?>
-                    <form action="addImmo.php" method="get" class="favoris-form">
-                        <button type="submit" class="btn btn-primary rounded-circle shadow" style="margin-top: -15px;">
-                            <i class="bi bi-plus" style="font-size: 150%;"></i>
-                        </button>
-                    </form>
-                <?php endif; ?>
-                    <input type="text" id="searchInput" class="form-control ml-3 mb-3" placeholder="Rechercher par adresse ou id">
+                <div class="col-md-12">
+                    <input type="text" id="searchInput" class="form-control mb-3" placeholder="Rechercher par adresse ou id">
                 </div>
             </div>
         </div>
-
         <div class="row" id="searchResult">
-        <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo '<div class="col-md-4">';
-                    echo '    <div class="card">';
-                    echo '        <img src="' . $row["immobilierPhoto"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
-                    echo '        <div class="card-body d-flex flex-column">';
-                    echo '            <div class="mt-auto text-center">';
-                    echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
-                    if ($row["type"] == "location") {
-                        echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / mois</b></p>';
-                    } else if ($row["type"] == "terrain") {
-                        echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / m²</b></p>';
-                    } else {
-                        echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€</b></p>';
+            <?php
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        echo '<div class="col-md-4">';
+                        echo '    <div class="card">';
+                        echo '        <img src="' . $row["immobilierPhoto"] . '" class="card-img-top" alt="Photo de ' . $row["description"] . '">';
+                        echo '        <div class="card-body d-flex flex-column">';
+                        echo '            <div class="mt-auto text-center">';
+                        echo '              <h5 class="card-title">' . $row["description"] . '</h5>';
+                        if ($row["type"] == "location") {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / mois</b></p>';
+                        } else if ($row["type"] == "terrain") {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€ / m²</b></p>';
+                        } else {
+                            echo '              <p class="card-text" style="font-size: 20px;"><b>' . number_format($row["prix"], 2) . '€</b></p>';
+                        }
+                        echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
+                        echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '"data-agentEmail="' . $row["agentEmail"] . '" data-adresse="' . $row["adresse"] . '" data-nbPiece="' . $row["nbPiece"] . '" data-nbChambre="' . $row["nbChambre"] . '" data-description="' . $row["description"] . '" data-id="' . $row["id"] .'" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
+                        echo '            </div>';
+                        echo '        </div>';
+                        echo '    </div>';
+                        echo '</div>';                    
                     }
-                    echo '              <img src="' . $row["agentPhoto"] . '" class="agent-photo" alt="Photo de l\'agent">';
-                    echo '              <a href="#" data-immo="' . $row["immobilierPhoto"] . '" data-agentemail="' . $row["agentEmail"] . '" data-adresse="' . $row["adresse"] . '" data-nbpiece="' . $row["nbPiece"] . '" data-nbchambre="' . $row["nbChambre"] . '" data-description="' . $row["description"] . '" data-id="' . $row["id"] . '" data-dimension="' . $row["dimension"] . '" data-prix="' . number_format($row["prix"], 2) . '" class="btn btn-primary btn-immo">Détails</a>';
-                    if ($row['favorisId']) {
-                        echo '<form action="remove_from_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
-                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
-                                <button type="submit" class="favoris-btn favorited"><i class="fas fa-heart" style="font-size: 150%;"></i></button>
-                            </form>';
-                    } else {
-                        echo '<form action="add_to_favoris.php" method="post" class="favoris-form" style="position: absolute; right: 10%; bottom: 10%;">
-                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                <input type="hidden" name="mailClient" value="' . $_SESSION["email"] . '">
-                                <button type="submit" class="favoris-btn"><i class="far fa-heart" style="font-size: 150%;"></i></button>
-                            </form>';
-                    }
-                    if ($compte_type == 3) {
-                        echo '<form action="delete_immobilier.php" method="post" onsubmit="return confirm(\'Êtes-vous sûr de vouloir supprimer cet immobilier ?\');" style="display:inline;">
-                                <input type="hidden" name="idImmobilier" value="' . $row["id"] . '">
-                                <button type="submit" class="btn-delete">
-                                    &times;
-                                </button>
-                              </form>';
-                    }
-                    echo '            </div>';
-                    echo '        </div>';
-                    echo '    </div>';
-                    echo '</div>';
+                } else {
+                    echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
                 }
-            } else {
-                echo '<div class="col-12"><p class="text-center" style="color: #007bff;">0 résultats</p></div>';
-            }
-            $conn->close();
+                $conn->close();
             ?>
-
         </div>
     </div>
 
@@ -461,12 +329,6 @@ if ($result_favoris->num_rows > 0) {
             </div>
 
     </center>
-    <div id="chatbot" style="position: fixed; bottom: 0; right: 0; width: 300px; height: 400px; border: 1px solid #dee2e6; padding: 10px; background-color: #333; color: white; z-index: 1000; border-radius: 15px 0px 0px 0px; box-shadow: 0 0 10px rgba(0,0,0,0.1); opacity: 0; visibility: hidden; transition: visibility 0s, opacity 0.2s linear;">
-  <div id="chatbot-messages" style="height: 90%; overflow: auto; border: 1px solid #dee2e6; border-radius: 10px; padding: 10px; margin-bottom: 10px; transition: visibility 0s, opacity 1s linear; /* Transition plus rapide */"></div>
-</div>
-
-<button id="chatbot-toggle" style="position: fixed; bottom: 10px; right: 10px; z-index: 1001; background-color: #007BFF; color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; line-height: 50px; text-align: center;">&#8593;</button>
-
 
     <footer class="footer">
         <div class="container-fluid">
@@ -487,23 +349,7 @@ if ($result_favoris->num_rows > 0) {
                   
                 </div>
                
-                <div class="container">
-        <div class="left-column">
-        <div class="contact-info">
-                    
-                    <h6 class="big-title">Notre Histoire</h6>
-                    <p class="history-text">
-        Omnes Immobilier est une agence immobilière dynamique et innovante, fondée en 2024 et située au cœur du 15ème arrondissement de Paris, à quelques pas de la majestueuse Tour Eiffel. Notre entreprise a été créée avec une mission claire : révolutionner le marché immobilier parisien en offrant des services exceptionnels, personnalisés et axés sur la satisfaction de nos clients.
-    </p>
-    <p class="history-text">
-        Notre équipe est composée de professionnels expérimentés et passionnés, dédiés à vous accompagner dans tous vos projets immobiliers, qu'il s'agisse d'achat, de vente, de location ou d'investissement. Chez Omnes Immobilier, nous croyons en une approche humaine et transparente, où chaque client est traité avec le plus grand soin et le respect qu'il mérite.
-    </p>
-    <p class="history-text">
-        Depuis notre lancement, nous avons aidé de nombreux clients à trouver leur foyer idéal et à réaliser leurs rêves immobiliers. Rejoignez-nous et découvrez comment Omnes Immobilier peut transformer votre vision en réalité.
-    </p>
-    </div>
-    </div>
-                </div>
+                
                 <div class="gif">
                 <img src="assets/omnes.gif" alt="Omnes Immobilier GIF" width="300">
             </div>
@@ -525,10 +371,6 @@ if ($result_favoris->num_rows > 0) {
         </div>
     </footer>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Popper.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
         let lastScrollTop = 0;
@@ -579,18 +421,6 @@ $(document).ready(function() {
     });
 });
 
-$(document).ready(function() {
-    $('.heart').hover(
-        function() { // Fonction exécutée lorsque la souris passe sur le cœur
-            $(this).removeClass('far').addClass('fas');
-        },
-        function() { // Fonction exécutée lorsque la souris quitte le cœur
-            if (!$(this).data('favoris-id')) {
-                $(this).removeClass('fas').addClass('far');
-            }
-        }
-    );
-});
 </script>
 
 
@@ -609,12 +439,6 @@ $(document).ready(function() {
     document.getElementById("searchInput").addEventListener("input", function() {
         var inputVal = this.value;
         searchImmobiliers(inputVal);
-    });
-
-    $('#immoModal').on('hidden.bs.modal', function () {
-        $(this).find('form').trigger('reset');
-        $(this).find('img').attr('src', '');
-        $(this).find('.modal-body p').text('');
     });
 
     $(document).ready(function() {
@@ -652,7 +476,7 @@ $(document).ready(function() {
 
 function searchImmobiliers(inputVal) {
     var searchInput = inputVal;
-    fetch('searchTerrain.php', {
+    fetch('searchterrain.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -673,128 +497,10 @@ function searchImmobiliers(inputVal) {
 
 
 </script>
-<script>
-  document.getElementById('chatbot-toggle').addEventListener('click', function() {
-    var chatbot = document.getElementById('chatbot');
-    var toggleButton = document.getElementById('chatbot-toggle');
-    if (chatbot.style.opacity === '0') {
-      chatbot.style.opacity = '1';
-      chatbot.style.visibility = 'visible';
-      toggleButton.innerHTML = '&#8595;';
-    } else {
-      chatbot.style.opacity = '0';
-      chatbot.style.visibility = 'hidden';
-      toggleButton.innerHTML = '&#8593;';
-    }
-  });
-</script>
-<script>
-var chatbotMessages = document.getElementById('chatbot-messages');
-var agents = <?php echo json_encode($compteAgent); ?>;
-var chatFlow = {
-  "Contacter les agents ?": {
-    response: "Choississez un moyen de contact :",
-    followUp: {
-      "Email": {
-        response: "Choississez un agent :",
-        followUp: {}
-      },
-      "Video Conférence": {
-        response: "Choississez un agent :",
-        followUp: {}
-      }
-    }
-  },
-  "En savoir plus sur le site ?": {
-    response: "Chez OmnesImmobilier, notre mission est simple : vous offrir un service personnalisé et de qualité pour répondre à toutes vos attentes. Nous nous engageons à vous fournir des solutions adaptées à vos besoins spécifiques, en mettant l'accent sur la transparence, la fiabilité et la satisfaction client."
-  }
-};
-
-agents.forEach(function(agent) {
-  chatFlow["Contacter les agents ?"].followUp["Video Conférence"].followUp[agent.prenom] = {
-    response: "Je vous met en contact avec : " + agent.prenom 
-  };
-  chatFlow["Contacter les agents ?"].followUp["Email"].followUp[agent.prenom] = {
-    response: "Je vous redirige vers l'email de " + agent.prenom + " est " + agent.email
-  };
-});
-
-var currentChat = chatFlow;
-
-function displayMessage(message, className, boolQuestion) {
-  var messageDiv = document.createElement('div');
-  messageDiv.textContent = message;
-  messageDiv.className = className;
-  chatbotMessages.appendChild(messageDiv);
-
-  if (!boolQuestion) {
-    var nextButton = document.createElement('button');
-    nextButton.textContent = 'Suivant';
-    nextButton.className = 'chatbot-question'; // Assign the same class as the question buttons
-    nextButton.style.padding = '5px 10px'; // Adjust the padding to make the button smaller
-    chatbotMessages.appendChild(nextButton);
-
-    nextButton.addEventListener('click', function() {
-      if (message.startsWith("Je vous met en contact avec :")) {
-        var agent = message.split(" ")[7];
-        console.log(agent);
-        var currentPage = encodeURIComponent(window.location.href);
-        window.location.href = "videoConference.php?agent=" + encodeURIComponent(agent) + "&currentPage=" + currentPage;
-      }
-      if (message.startsWith("Je vous redirige vers l'email de ")) {
-        var email = message.split(" ")[8];
-        console.log(email);
-        var currentPage = encodeURIComponent(window.location.href);
-        window.location.href = "sendEmail.php?email=" + encodeURIComponent(email) + "&currentPage=" + currentPage;
-      }
-      if (currentChat.followUp) {
-        displayQuestions(currentChat.followUp);
-        currentChat = currentChat.followUp;
-      } else {
-        displayQuestions(chatFlow);
-        currentChat = chatFlow;
-      }
-    });
-    
-  }
-}
-
-function displayQuestions(questions) {
-  chatbotMessages.innerHTML = ''; // Clear the chatbot messages
-  for (var question in questions) {
-    displayMessage(question, 'chatbot-question', true);
-  }
-}
-
-function hideQuestions() {
-  chatbotMessages.innerHTML = '';
-}
-
-displayQuestions(currentChat); // Display the main questions at the beginning
-
-// Add a click event listener to each question
-chatbotMessages.addEventListener('click', function(e) {
-  if (e.target && e.target.className === 'chatbot-question') {
-    var question = e.target.textContent;
-
-    var response = currentChat[question].response;
-    var followUp = currentChat[question].followUp;
-
-    // Update currentChat to the selected question
-    currentChat = currentChat[question];
-
-    // Remove the user's question
-    e.target.parentNode.removeChild(e.target);
-
-    hideQuestions(); // Hide the questions after the user has clicked on one
-
-    displayMessage(response, 'chatbot-response', false);
-  }
-});
-</script>
 
 <script src="js/jquery-3.3.1.min.js"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/jquery.sticky.js"></script>
 <script src="js/main.js"></script>
+
