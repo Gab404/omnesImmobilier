@@ -135,7 +135,33 @@ $conn->close();
         .property-price {
             font-size: 0.9rem; 
         }
-        
+        .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .close-button:hover {
+        background-color: #ff4c4c;
+        transform: scale(1.1);
+    }
+
+    .close-button:focus {
+        outline: none;
+    }
     </style>
     <title>Omnes Immobilier - Mon Compte</title>
 </head>
@@ -261,6 +287,10 @@ $conn->close();
         while ($row = $result->fetch_assoc()) {
             echo '<div class="col-md-4 mb-4">'; // Chaque carte prend 4 colonnes sur un total de 12, avec une marge inférieure de 4
             echo '<div class="card shadow property-card" style="height: 100%;width: 90%;">'; // Ajout d'une ombre pour un aspect moderne et définir une hauteur fixe pour chaque carte
+            echo '<form method="POST" action="removeFavori.php">
+            <input type="hidden" name="favorisId" value="' . $row['favorisId'] . '">
+            <button type="submit" class="close-button">x</button>
+        </form>';
             echo '<img src="' . $row['immobilierPhoto'] . '" class="card-img-top property-image" alt="Property image">';
             echo '<div class="card-body">';
             echo '<h5 class="card-title property-title">' . $row['adresse'] . '</h5>';
@@ -323,6 +353,7 @@ $conn->close();
         </div>
     </footer>
     <script>
+
     document.getElementById('chatbot-toggle').addEventListener('click', function() {
         var chatbot = document.getElementById('chatbot');
         var toggleButton = document.getElementById('chatbot-toggle');
