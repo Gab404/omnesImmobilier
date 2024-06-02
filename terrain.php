@@ -52,6 +52,37 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
+         .container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start; /* Align items to the start */
+        }
+        .left-column {
+           
+            padding: 4px;
+        }
+        .right-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .gif {
+            width: 600px;
+            height: auto;
+            margin-top: 1rem;
+            margin-bottom: 1rem; 
+        }
+        .hero-image-container {
+            position: fixed;
+            bottom: 100px;
+            right: 100px;
+            z-index: 1000;
+        }
+.hero-image {
+            width: 10Opx; /* Taille du GIF */
+            height: auto; /* Maintient les proportions */
+        }
+        
          .custom-box {
             border: 4px solid black;
             padding: 20px;
@@ -63,6 +94,17 @@ $result = $conn->query($sql);
             color: black;
             font-size: 40px;
         }
+        .big-title {
+        font-size: 2.5rem; /* Adjust size as needed */
+        font-weight: bold; /* Make it bold */
+        margin-top: 2rem;  /* Adjust the margin-top as needed */
+        text-align: center; /* Center align the text */
+    }
+    .history-text {
+        font-size: 1.1rem;
+        margin-top: 1rem; /* Space between title and text */
+        text-align: justify; /* Justify text alignment for a clean look */
+    }
         body {
             background-color: white;
         }
@@ -73,6 +115,8 @@ $result = $conn->query($sql);
         .map-container {
             width: 100%;
             height: 400px;
+            margin-top: 1rem;
+            margin-bottom: 1rem; 
         }
         .card {
             margin: 15px;
@@ -130,6 +174,9 @@ $result = $conn->query($sql);
           max-height: 50px; /* Ajustez cette valeur en fonction de la taille de votre image */
           margin-right: 10px;
       }
+      .contact-info {
+            margin-bottom: 2rem; /* Space between contact info and the title */
+        }
     </style>
     <title>Omnes Immobilier - Biens Immobiliers</title>
 </head>
@@ -202,7 +249,9 @@ $result = $conn->query($sql);
 
     <section id="accueil" class="mt-0">
         <img src="assets/bgTerrain.jpg" class="hero-image" alt="Hero Image">
+        
     </section>
+
 
     <div id="planning">
     <div class="container-fluid mt-5 text-center">
@@ -289,25 +338,50 @@ $result = $conn->query($sql);
                 </div>
                 <div class="col-md-4 mb-3">
                     <p>Adresse : 10 Rue Sextius Michel, 75015 Paris, France</p>
+            
                 </div>
                 <div class="col-md-4 mb-3">
                     <p>Téléphone : +33 1 23 45 67 89</p>
+                  
                 </div>
                 <div class="col-md-4 mb-3">
-                    <p>Email : contact@omnesimmobilier.fr</p>
+                <p>Email : contact@omnesimmobilier.fr</p>
+                  
                 </div>
-                <div class="col-md-4 mb-3">
+               
+                <div class="container">
+        <div class="left-column">
+        <div class="contact-info">
+                    
+                    <h6 class="big-title">Notre Histoire</h6>
+                    <p class="history-text">
+        Omnes Immobilier est une agence immobilière dynamique et innovante, fondée en 2024 et située au cœur du 15ème arrondissement de Paris, à quelques pas de la majestueuse Tour Eiffel. Notre entreprise a été créée avec une mission claire : révolutionner le marché immobilier parisien en offrant des services exceptionnels, personnalisés et axés sur la satisfaction de nos clients.
+    </p>
+    <p class="history-text">
+        Notre équipe est composée de professionnels expérimentés et passionnés, dédiés à vous accompagner dans tous vos projets immobiliers, qu'il s'agisse d'achat, de vente, de location ou d'investissement. Chez Omnes Immobilier, nous croyons en une approche humaine et transparente, où chaque client est traité avec le plus grand soin et le respect qu'il mérite.
+    </p>
+    <p class="history-text">
+        Depuis notre lancement, nous avons aidé de nombreux clients à trouver leur foyer idéal et à réaliser leurs rêves immobiliers. Rejoignez-nous et découvrez comment Omnes Immobilier peut transformer votre vision en réalité.
+    </p>
+    </div>
+    </div>
+                </div>
+                <div class="gif">
+                <img src="assets/omnes.gif" alt="Omnes Immobilier GIF" width="300">
+            </div>
+            <div class="right-column">
                     <div class="map-container">
                         <iframe 
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.5364824916036!2d2.2896013156759247!3d48.84883177928647!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e671c6b24f2cd7%3A0x6f98e5e56b1d39c3!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1652874998836!5m2!1sen!2sus" 
                             width="100%" 
-                            height="70%" 
+                            height="75%" 
                             style="border:0;" 
                             allowfullscreen="" 
                             loading="lazy" 
                             referrerpolicy="no-referrer-when-downgrade">
                         </iframe>
                     </div>
+ 
                 </div>
             </div>
         </div>
@@ -315,6 +389,20 @@ $result = $conn->query($sql);
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
+        let lastScrollTop = 0;
+        const gifContainer = document.getElementById('gifContainer');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop) {
+                // Scrolling down
+                gifContainer.style.display = 'block';
+            } else {
+                // Scrolling up
+                gifContainer.style.display = 'none';
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+        }, false);
         $(document).ready(function() {
             $('#searchForm').on('submit', function(e) {
                 e.preventDefault();
