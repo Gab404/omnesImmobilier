@@ -1,3 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        a {
+            display: inline-block;
+            margin: 10px;
+            padding: 20px 40px;
+            background-color: #0056b3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <h1>Choisissez une heure pour la visite</h1>
+    </center>
+<center>
 <?php
 // Connexion à la base de données
 $servername = "localhost";
@@ -23,11 +52,8 @@ $startHour = 9;
 $endHour = 18;
 
 // Récupérer les heures déjà prises pour cette date et cet agent
-// Récupérer les heures déjà prises pour cette date et cet agent
 $sql = "SELECT heure AS hour FROM planning WHERE mailAgent = '$agentEmail' AND DATE(date) = '$date'";
 $result = $conn->query($sql);
-
-
 
 $hoursTaken = array();
 if ($result->num_rows > 0) {
@@ -52,3 +78,6 @@ foreach ($availableHours as $hour) {
 // Fermer la connexion à la base de données
 $conn->close();
 ?>
+</center>
+</body>
+</html>
