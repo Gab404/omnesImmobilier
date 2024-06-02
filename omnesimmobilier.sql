@@ -26,6 +26,7 @@ SET time_zone = "+00:00";
 --
 -- Structure de la table `compte`
 --
+USE omnesimmobilier;
 
 DROP TABLE IF EXISTS `compte`;
 CREATE TABLE IF NOT EXISTS `compte` (

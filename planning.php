@@ -56,7 +56,15 @@ if ($result->num_rows > 0) {
     }
 }
 
-
+// Récupérer les agents de type 2
+$sql = "SELECT * FROM compte WHERE type = 2";
+$result2 = $conn->query($sql);
+$compteAgent = $result2->fetch_all(MYSQLI_ASSOC);
+if (!is_array($compteAgent)) {
+  echo '$compteAgent n\'est pas un tableau';
+} else {
+  echo '$compteAgent est un tableau';
+}
 
 // Fermer la connexion à la base de données
 $conn->close();
@@ -499,22 +507,35 @@ html += `<div class="calendar-day ${dayClass} ${eventClass}" data-event='${JSON.
 </script>
 <script>
 var chatbotMessages = document.getElementById('chatbot-messages');
+var agents = <?php echo json_encode($compteAgent); ?>;
 var chatFlow = {
-  "Peut tu chier ?": {
-    response: "Oui, je peux chier.",
+  "Contacter les agents ?": {
+    response: "Choississez un moyen de contact :",
     followUp: {
-      "Nan jure ?": {
-        response: "Je jure que je peux chier."
+      "Email": {
+        response: "Choississez un agent :",
+        followUp: {}
       },
-      "Je te crois pas": {
-        response: "La vie que je peux chier."
+      "Video Conférence": {
+        response: "Choississez un agent :",
+        followUp: {}
       }
     }
   },
-  "Question 2": {
-    response: "Réponse 2"
+  "En savoir plus sur le site ?": {
+    response: "Chez OmnesImmobilier, notre mission est simple : vous offrir un service personnalisé et de qualité pour répondre à toutes vos attentes. Nous nous engageons à vous fournir des solutions adaptées à vos besoins spécifiques, en mettant l'accent sur la transparence, la fiabilité et la satisfaction client."
   }
 };
+
+agents.forEach(function(agent) {
+  chatFlow["Contacter les agents ?"].followUp["Video Conférence"].followUp[agent.prenom] = {
+    response: "Je vous met en contact avec : " + agent.prenom 
+  };
+  chatFlow["Contacter les agents ?"].followUp["Email"].followUp[agent.prenom] = {
+    response: "Je vous redirige vers l'email de " + agent.prenom + " : " + agent.email
+  };
+});
+
 var currentChat = chatFlow;
 
 function displayMessage(message, className, boolQuestion) {
